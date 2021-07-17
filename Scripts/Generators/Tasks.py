@@ -1,5 +1,5 @@
 import random
-import Scripts.Generators.Functions as Functions
+from . import Functions
 
 class TasksException(Exception):
 	pass
