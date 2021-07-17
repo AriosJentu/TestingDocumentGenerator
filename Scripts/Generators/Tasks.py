@@ -132,14 +132,14 @@ class SpecificTaskInfo:
 	- 'appear_count': count of possible appearings this task in all tasks in generation. -1 means it can appear every cycle. By default it's -1
 	Available attributes:
 	- 'filepath': Path of the task file
-	- 'appear_count': count of possible appearings this task in all tasks in generation. -1 means it can appear every cycle. By default it's -1
+	- 'available_appear_count': count of possible appearings this task in all tasks in generation. -1 means it can appear every cycle. By default it's -1
 	- 'fixed_appear_count': same as 'appear_count', but fixed for regeneration
 	- 'updater': Function for updating task string on generation step. Must return string with updated task info, if replace (with method 'set_updater_function')
 	'''
 
 	def __init__(self, file_path: str, appear_count: int = -1):
 		self.filepath = file_path
-		self.appear_count = appear_count
+		self.available_appear_count = appear_count
 		self.fixed_appear_count = appear_count
 
 		#Update task information function
@@ -149,18 +149,22 @@ class SpecificTaskInfo:
 		'''Function to set updating task string function. Without arguments it reseting function to default - nothing to update'''
 		self.updater = updater
 
+	def get_possible_appear_count(self):
+		'''Function to get count of available appearing possibilities'''
+		return self.available_appear_count
+
 	def is_possible_to_generate(self):
 		'''Function to check possibility to use this kind of tasks'''
-		return self.appear_count != 0
+		return self.available_appear_count != 0
 
 	def regenerate_possibility(self):
 		'''Function to recover possibility to generate this kind of tasks'''
-		self.appear_count = self.fixed_appear_count
+		self.available_appear_count = self.fixed_appear_count
 
 	def get_task(self):
 		'''Function to get task from this filepath'''
 
-		if self.appear_count == 0:
+		if self.available_appear_count == 0:
 			return None
 
 		#Specific tasks contain all title and questions inside in combined form
@@ -168,8 +172,8 @@ class SpecificTaskInfo:
 			taskinfo = file.read()
 
 		#Decrease appearing count, if it's not infinitely many possibilities
-		if self.appear_count > 0:
-			self.appear_count -= 1
+		if self.available_appear_count > 0:
+			self.available_appear_count -= 1
 
 		taskinfo = self.updater(taskinfo)
 		return taskinfo

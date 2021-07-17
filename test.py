@@ -16,4 +16,4 @@ task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant7.tex"))
 task2 = Tasks.SpecificTasks(task2variants)
 task2.read_information()
 for i in range(24):
-	print(task2.generate_task(), [i.appear_count for i in task2variants])
+	print(task2.generate_task(), [i.get_possible_appear_count() for i in task2variants])
