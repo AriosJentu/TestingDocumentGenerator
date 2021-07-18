@@ -1,0 +1,62 @@
+\documentclass[12pt, fleqn, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{lipsum}
+
+\newcommand{\preamble}{\lipsum[1]}
+
+\newcommand{\generatepage}[4]{
+	%1 - Control event name
+	%2 - Student name
+	%3 - Student group
+	%4 - Content
+	\begin{center}
+		{\Large #1}
+
+		\textbf{Student:} #2
+
+		\textbf{Group:} #3
+
+	\end{center}
+
+	\vspace{10pt}
+
+	\preamble
+
+	\begin{enumerate}
+		#4
+	\end{enumerate}
+
+	\pagebreak
+}
+
+\begin{document}
+	
+	\generatepage{Homework}{AriosJentu}{M0744-228.13.37}{
+		\item Hello There
+			14
+			Hello World
+			8
+			Task 7
+		\item Hello There
+			6
+			5
+			7
+			Updated Task 5
+	}
+
+	\generatepage{Homework}{AriosJentu}{M0744-228.13.37}{
+		\item Hello There
+			14
+			Hello World
+			8
+			Task 7
+		\item Hello There
+			6
+			5
+			7
+			Updated Task 5
+	}
+
+
+\end{document}
