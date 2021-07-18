@@ -3,12 +3,12 @@ import random
 class Functions:
 
 	@staticmethod
-	def is_empty_string(string):
+	def is_empty_string(string) -> bool:
 		'''Function to check is string empty or is it starts from a comment operator (% for LaTeX)'''
 		return string[0] == "%" or string == "" or string == " "
 
 	@staticmethod
-	def get_random_index_with_cache(from_list: list, cache_list: list):
+	def get_unused_index(from_list: list, cache_list: list) -> int:
 		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
 		randindex = random.randrange(len(from_list))
 
