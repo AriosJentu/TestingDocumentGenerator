@@ -1,5 +1,6 @@
 import Scripts.Generators.Tasks as Tasks
 import Scripts.Generators.Excercises as Excercises
+import Scripts.Generators.Variant as Variant
 import Scripts.Generators.Document as Document
 
 def test_log(*args, **kwargs):
@@ -60,14 +61,23 @@ def test_excercises(task1_information, task2_information):
 	for task in generated:
 		test_log(task)
 
+	return excercise
+
+def test_variant(excercise):
+	variant = Variant.Variant([excercise, excercise])
+	generated = variant.generate_variant()
+	
+	for excercise in generated:
+		test_log(excercise)
+
 	return generated
 
-def test_parse_arguments_class(excercise):
-	pageargs = Document.PageArguments(student_class="M0744-228.13.37", student="AriosJentu", excercises=[excercise, excercise])
+def test_parse_arguments_class(variant):
+	pageargs = Document.PageArguments(student_class="M0744-228.13.37", student="AriosJentu", variant=variant)
 	
 	test_log(*pageargs)
 	test_log(pageargs.dict())
-	test_log(pageargs.get_excercises())
+	test_log(pageargs.get_variant())
 	
 	return pageargs
 
@@ -87,7 +97,8 @@ def test_generate_page(pageargs):
 task1 = test_task1()
 task2 = test_task2()
 task1_information, task2_information = test_task_information(task1, task2)
-generated = test_excercises(task1_information, task2_information)
+excercise = test_excercises(task1_information, task2_information)
+generated = test_variant(excercise)
 pageargs = test_parse_arguments_class(generated)
 pagestyle = test_generate_page(pageargs)
 
