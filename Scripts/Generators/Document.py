@@ -1,23 +1,23 @@
-from . import Excercises
+from . import Variant
 
 class PageArguments:
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
 	Initial arguments:
-	- 'excercises': List of generated excercises for this page 
+	- 'variant': Generated variant for this page (object of class GeneratedVariant) 
 	- 'entries': Dictionary of values, which will be used in generation
 	'''
 
 	def __init__(self, 
-			excercises: list[Excercises.GeneratedExcercise], 
+			variant: Variant.GeneratedVariant, 
 			**entries
 	):
-		self.__excercises__ = excercises
+		self.__variant__ = variant
 		self.__dict__.update(entries)
 		self.__keys__ = entries.keys()
 
-	def get_excercises(self) -> list[Excercises.GeneratedExcercise]:
-		return self.__excercises__
+	def get_variant(self) -> Variant.GeneratedVariant:
+		return self.__variant__
 
 	def __iter__(self):
 		for i in self.__keys__:
@@ -36,21 +36,21 @@ class PageStyle:
 	'''
 	PageStyle - class with style information about page of document
 	Inital arguments:
-	- 'page_format_string': Format-type string with content of the page. Must containing {excercises} element to replace them with excercises, and some other text {arg1}, {arg2} from executing PageArguments class, etc. Will be used in context of 'page_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
-	- 'excercise_format_string': Format-type string for excercises. Must containing {title} and {tasks} elements. Will be used in context of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
+	- 'variant_format_string': Format-type string with content of variant of the page. Must containing {excercises} element to replace them with excercises of the variant, and some other text {arg1}, {arg2} from executing PageArguments class, etc. Will be used in context of 'page_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
+	- 'excercise_format_string': Format-type string for variant. Must containing {title} and {tasks} elements. Will be used in context of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
 	- 'tasks_format_string': Format-type string for tasks. Must containing {task} element. Will be used in context of 'tasks_format_string.format(task="This task")'
 	Available attributes:
-	- 'page_format': Page format string
+	- 'variant_format': Page format string
 	- 'excercise_format': Excercises format string
 	- 'tasks_format': Tasks format string
 	'''
 
 	def __init__(self, 
-			page_format_string: str, 
+			variant_format_string: str, 
 			excercise_format_string: str,
 			tasks_format_string: str = "{task}"
 	):
-		self.page_format = page_format_string
+		self.variant_format = variant_format_string
 		self.excercise_format = excercise_format_string
 		self.tasks_format = tasks_format_string
 
@@ -60,12 +60,12 @@ class PageStyle:
 		'''
 		Function to generate page string from format arguments and excercises. Put all in format string and return it.
 		Arguments:
-		- 'format_arguments': Object of class PageArguments. Containing page arguments with excercises
+		- 'format_arguments': Object of class PageArguments. Containing page arguments with variant with excercises
 		'''
 
 		excercises_formatted = []
-		#For all excercises
-		for excercise in format_arguments.get_excercises():
+		#For all excercises from variant
+		for excercise in format_arguments.get_variant():
 			
 			#First of all - format all tasks of this excercise
 			tasks_formatted = []
@@ -87,7 +87,7 @@ class PageStyle:
 		page_excercises = "\n".join(excercises_formatted)
 
 		#Put this content inside
-		page_content = self.page_format.format(**format_arguments.dict(), excercises=page_excercises)
+		page_content = self.variant_format.format(**format_arguments.dict(), excercises=page_excercises)
 
 		return page_content
 
