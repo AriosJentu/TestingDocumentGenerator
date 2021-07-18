@@ -1,8 +1,41 @@
-import random
 from . import Functions
 
 class TasksException(Exception):
 	pass
+
+class Task:
+	'''
+	Task - class of task string. Containing only string of generated task
+	'''
+	def __init__(self, taskstr: str):
+		self.string = taskstr
+
+	def get_task(self):
+		return self.string
+
+	def update_task_string(self, string):
+		'''Function to update task string with function in terms of string. Function must contain argument of string, and must return string. This function updates this task string'''
+		self.string = string
+
+	def remove_new_lines(self):
+		'''Function to remove new lines on the task'''
+		self.string = self.string.replace("\n", "")
+
+	def task_from_update_function(self, update_function):
+		'''Function to generate new Task from current with updating it with function in terms of string. Function must contain argument of string, and must return string. This function returns a new copy of the task'''
+		return Task(update_function(self.string))
+
+	#Classic overloading of string functions
+	def __str__(self):
+		return f"Task:\n\t{self.string}"
+
+	def __repr__(self):
+		result = self.string
+		if len(result) > 80:
+			result = result[:80]+"..."
+		if result.find("\n") > 0:
+			result = result[:result.find("\n")]+"..."
+		return f"Task('{self.string}')"
 
 class Tasks:
 	'''
@@ -48,9 +81,9 @@ class Tasks:
 		'''Function to read all information about tasks. Must be callable only ones'''
 		return
 
-	def generate_task(self):
-		'''Function to choose random task from list of tasks'''
-		return
+	def generate_task(self) -> Task:
+		'''Function to choose random task from list of tasks. Must return object of Task class'''
+		return ""
 
 class BasicTasks(Tasks):
 	'''
@@ -79,7 +112,7 @@ class BasicTasks(Tasks):
 		
 		with open(self.filepath) as file:
 			#Read tasks with non-comment lines, and only if them non-empty
-			self.all_tasks = [i for i in file.readlines() if not Functions.Functions.is_empty_string(i)]
+			self.all_tasks = [Task(i) for i in file.readlines() if not Functions.Functions.is_empty_string(i)]
 			self.tasks_count  = len(self.all_tasks)
 			self.unused_tasks = list(range(self.tasks_count))
 			self.cache_used = []
@@ -88,18 +121,12 @@ class BasicTasks(Tasks):
 		'''Function to refresh list of unused tasks. Must be used only when this list is empty'''
 		self.unused_tasks = list(range(self.tasks_count))
 
-	def __get_unused_random_index__(self):
-		'''Function to gen random index from unused tasks, and this index isn't appeared in cache'''
-		randindex = random.randrange(len(self.unused_tasks))
+	def __get_unused_random_index__(self) -> int:
+		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
+		return Functions.Functions.get_unused_index(self.unused_tasks, self.cache_used)
 
-		#If this task in cache already, then choose task again
-		if self.unused_tasks[randindex] in self.cache_used:
-			return self.__get_unused_random_index__()
-		else:
-			return randindex
-
-	def generate_task(self):
-		'''Function to choose random task from list of tasks'''
+	def generate_task(self) -> Task:
+		'''Function to choose random task from list of tasks. Must return object of Task class'''
 
 		#Throw exception if there is no tasks (by task count)
 		if self.tasks_count == 0:
@@ -114,10 +141,10 @@ class BasicTasks(Tasks):
 		self.__push_in_cache__(task_index)
 
 		#Update task string from updater function
-		task = self.updater(self.all_tasks[task_index])
+		task = self.all_tasks[task_index].task_from_update_function(self.updater)
 
 		#Remove \n from task
-		task = task.replace("\n", "")
+		task.remove_new_lines()
 
 		#Return task string
 		return task
@@ -149,11 +176,11 @@ class SpecificTaskInfo:
 		'''Function to set updating task string function. Without arguments it reseting function to default - nothing to update'''
 		self.updater = updater
 
-	def get_possible_appear_count(self):
+	def get_possible_appear_count(self) -> int:
 		'''Function to get count of available appearing possibilities'''
 		return self.available_appear_count
 
-	def is_possible_to_generate(self):
+	def is_possible_to_generate(self) -> bool:
 		'''Function to check possibility to use this kind of tasks'''
 		return self.available_appear_count != 0
 
@@ -161,8 +188,8 @@ class SpecificTaskInfo:
 		'''Function to recover possibility to generate this kind of tasks'''
 		self.available_appear_count = self.fixed_appear_count
 
-	def get_task(self):
-		'''Function to get task from this filepath'''
+	def get_task(self) -> Task:
+		'''Function to get task from this filepath. Must return object of Task class'''
 
 		if self.available_appear_count == 0:
 			return None
@@ -176,7 +203,7 @@ class SpecificTaskInfo:
 			self.available_appear_count -= 1
 
 		taskinfo = self.updater(taskinfo)
-		return taskinfo
+		return Task(taskinfo)
 
 class SpecificTasks(Tasks):
 	'''
@@ -216,16 +243,9 @@ class SpecificTasks(Tasks):
 
 		self.unused_tasks = self.available_tasks.copy()
 
-	def __get_unused_random_index__(self):
-		'''Function to gen random index from unused tasks, and this index isn't appeared in cache'''
-
-		randindex = random.randrange(len(self.unused_tasks))
-
-		#If this task in cache already, then choose task again
-		if self.unused_tasks[randindex] in self.cache_used:
-			return self.__get_unused_random_index__()
-		else:
-			return randindex
+	def __get_unused_random_index__(self) -> int:
+		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
+		return Functions.Functions.get_unused_index(self.unused_tasks, self.cache_used)
 
 	def __push_in_cache__(self, taskindex: int):
 		'''Function to push tasks in cache of used tasks'''
@@ -240,8 +260,8 @@ class SpecificTasks(Tasks):
 
 		self.cache_used.append(taskindex)
 		
-	def generate_task(self):
-		'''Function to choose random task from list of tasks'''
+	def generate_task(self) -> Task:
+		'''Function to choose random task from list of tasks. Must return string of the task'''
 
 		#Throw exception if there is no tasks (by task count)
 		if self.tasks_count == 0:
@@ -254,7 +274,7 @@ class SpecificTasks(Tasks):
 		task_index = self.unused_tasks.pop(self.__get_unused_random_index__())
 		self.__push_in_cache__(task_index)
 
-		#Update task string from updater function
+		#Update task string from it's updater function
 		task = self.tasks[task_index].get_task()
 
 		#If there is no possibilities to use this task anymore, remove it from available 
@@ -264,6 +284,24 @@ class SpecificTasks(Tasks):
 		#Return task string
 		return task
 
-		
+class TasksInformation:
+	'''
+	TasksInformation - Class to work with tasks information. Containing object of Tasks class with it's repeating count.
+	Initial args:
+	- 'tasks': Tasks object (as objects of Tasks class and it's subclasses)
+	- 'repeating': Count of repeating tasks of this type in question
+	'''
 
+	def __init__(self, tasks: Tasks, repeating: int = 1):
+		self.tasks = tasks
+		self.repeating = repeating
+
+	def generate_tasks(self) -> list[str]:
+		'''Function to generate list of tasks for this 'Tasks' class. Returns list of strings'''
+
+		tasks = []
+		for _ in range(self.repeating):
+			tasks.append(self.tasks.generate_task())
+
+		return tasks
 
