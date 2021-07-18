@@ -288,7 +288,7 @@ class SpecificTasks(Tasks):
 		task_index = self.unused_tasks.pop(self.__get_unused_random_index__())
 		self.__push_in_cache__(task_index)
 
-		#Update task string from it's updater function
+		#Get task which updates from it's updater function
 		task = self.tasks[task_index].get_task()
 
 		#If there is no possibilities to use this task anymore, remove it from available 

@@ -5,7 +5,10 @@ class GeneratedExcercise:
 	'''
 	GeneratedExcercise - class with generated tasks and updated title for the excercise
 	Inital arguments:
-	- 'tasks': List of tasks (object of 'Task' class)
+	- 'tasks': List of tasks (objects of 'Task' class)
+	- 'title': Title of the excercise
+	Available attributes:
+	- 'tasks': List of tasks (objects of 'Task' class)
 	- 'title': Title of the excercise
 	'''
 
@@ -18,11 +21,11 @@ class GeneratedExcercise:
 		random.seed()
 		random.shuffle(self.tasks)
 
-	def get_title(self):
+	def get_title(self) -> str:
 		'''Function to get ecxercise title'''
 		return self.title
 
-	def get_tasks(self):
+	def get_tasks(self) -> list[Tasks.Task]:
 		'''Function to get ecxercise tasks'''
 		return self.tasks
 
