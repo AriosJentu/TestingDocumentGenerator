@@ -6,15 +6,22 @@ class TasksException(Exception):
 class Task:
 	'''
 	Task - class of task string. Containing only string of generated task
+	Initial arguments:
+	- 'task_string': String of the task text
+	Available attributes:
+	- 'string': Task text
 	'''
-	def __init__(self, taskstr: str):
-		self.string = taskstr
+	def __init__(self, task_string: str):
+		self.string = task_string
 
 	def get_task(self):
 		return self.string
 
+	def copy(self):
+		return Task(self.string)
+
 	def update_task_string(self, string):
-		'''Function to update task string with function in terms of string. Function must contain argument of string, and must return string. This function updates this task string'''
+		'''Function to update task to new string'''
 		self.string = string
 
 	def remove_new_lines(self):
@@ -24,6 +31,10 @@ class Task:
 	def task_from_update_function(self, update_function):
 		'''Function to generate new Task from current with updating it with function in terms of string. Function must contain argument of string, and must return string. This function returns a new copy of the task'''
 		return Task(update_function(self.string))
+
+	def update_task_string_with(self, update_function):
+		'''Function to update task string with function in terms of string. Function must contain argument of string, and must return string. This function updates this task string'''
+		self.string = update_function(self.string)
 
 	#Classic overloading of string functions
 	def __str__(self):
@@ -140,11 +151,14 @@ class BasicTasks(Tasks):
 		task_index = self.unused_tasks.pop(self.__get_unused_random_index__())
 		self.__push_in_cache__(task_index)
 
-		#Update task string from updater function
-		task = self.all_tasks[task_index].task_from_update_function(self.updater)
+		#Copy task
+		task = self.all_tasks[task_index].copy()
 
 		#Remove \n from task
 		task.remove_new_lines()
+		
+		#Update task string from updater function
+		task.update_task_string_with(self.updater)
 
 		#Return task string
 		return task
@@ -209,7 +223,7 @@ class SpecificTasks(Tasks):
 	'''
 	SpecificTasks - Class to work with specific tasks with choosing them from list of files. This kind of tasks choose one file of task from list of them. Files containing title and specific task inside. 
 	Also tasks can contain parts of replacement via some scripts. Information about it also can be passed here with specific method. And tasks may appears only for some times.
-	Initial args:
+	Initial arguments:
 	- 'list_tasks': List of specific tasks informations (as objects of SpecificTaskInfo class)
 	Available attributes:
 	- 'tasks': List of specific tasks informations
@@ -261,7 +275,7 @@ class SpecificTasks(Tasks):
 		self.cache_used.append(taskindex)
 		
 	def generate_task(self) -> Task:
-		'''Function to choose random task from list of tasks. Must return string of the task'''
+		'''Function to choose random task from list of tasks. Must return object of Task class'''
 
 		#Throw exception if there is no tasks (by task count)
 		if self.tasks_count == 0:
@@ -287,17 +301,17 @@ class SpecificTasks(Tasks):
 class TasksInformation:
 	'''
 	TasksInformation - Class to work with tasks information. Containing object of Tasks class with it's repeating count.
-	Initial args:
+	Initial arguments:
 	- 'tasks': Tasks object (as objects of Tasks class and it's subclasses)
 	- 'repeating': Count of repeating tasks of this type in question
 	'''
 
 	def __init__(self, tasks: Tasks, repeating: int = 1):
 		self.tasks = tasks
-		self.repeating = repeating
+		self.repeating = max(1, int(repeating))
 
-	def generate_tasks(self) -> list[str]:
-		'''Function to generate list of tasks for this 'Tasks' class. Returns list of strings'''
+	def generate_tasks(self) -> list[Task]:
+		'''Function to generate list of tasks for this 'Tasks' class. Returns list of objects of Task class'''
 
 		tasks = []
 		for _ in range(self.repeating):
