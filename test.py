@@ -3,10 +3,11 @@ import Scripts.Generators.Excercises as Excercises
 import Scripts.Generators.Variant as Variant
 import Scripts.Generators.Document as Document
 import Scripts.Generators.Functional as Functional
+import Scripts.EntryStudents as EntryStudents
 
 def test_log(*args, **kwargs):
 	return
-	#return print(*args, **kwargs)
+	# return print(*args, **kwargs)
 
 def test_structs():
 	
@@ -15,10 +16,31 @@ def test_structs():
 	y.a = 12
 	y.add(c=12)
 	y.add(**{"d": 14})
+	z = Functional.Struct(**{"c":"1", "d":2})
 
 	test_log(x)
 	test_log(x.dict())
 	test_log(y)
+	test_log(z)
+
+	structlist1 = Functional.StructList()
+	structlist1.append(x)
+	structlist1.append(y)
+
+	for struct in structlist1:
+		print(struct)
+
+	print()
+
+	structlist2 = Functional.StructList()
+	structlist2.append(z)
+
+	for struct in structlist2:
+		print(struct)
+
+	print(structlist1)
+	print(structlist2)
+	print(structlist1 == structlist2)
 
 def test_task1():
 	def task1_update_task(string):
@@ -86,7 +108,7 @@ def test_variant(excercise):
 	return variant
 
 def test_parse_arguments_class(variant):
-	pageargs = Document.PageValues(student_group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)
+	pageargs = Document.PageValues(group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)
 	
 	test_log(*pageargs)
 	test_log(pageargs.dict())
@@ -94,36 +116,62 @@ def test_parse_arguments_class(variant):
 	
 	return pageargs
 
-def test_generate_page(pageargs):
-	
-	page_format = "\t\\generatepage{{{control_event}}}{{{student}}}{{{student_group}}}{{\n{excercises}\n\t}}\n"
+def test_generate_pagestyle():
+
+	page_format = "\t\\generatepage{{{control_event}}}{{{student}}}{{{group}}}{{\n{excercises}\n\t}}\n"
 	excercise_format = "\t\t\\item {title}\n{tasks}"
-	tasks_format = "\t\t\t{task}" 
+	tasks_format = "\n\t\t\t{task}" 
 
 	pagestyle = Document.PageStyle(page_format, excercise_format, tasks_format)
+	return pagestyle
+
+
+def test_generate_page(pagestyle, pageargs):
 	
 	page = pagestyle.generate_page(pageargs)
 	test_log(page)
 
-	return pagestyle
+def test_students_reader():
+	studreader = EntryStudents.StudentsReader("Information/Students/students.txt")
+	students = studreader.generate_information()
+	for student in students:
+		test_log(student)
 
-def test_generate_document_string(pagestyle, pageargs):
+	return students
 
-	pagesinfo = Document.PagesInformation([pageargs, pageargs])
+def test_generate_students_with_variants_pagesinfo(students, variant):
+	
+	pagesinfolist = Document.PagesInformation()
+
+	for student in students:
+		pagevalue = Document.PageValues(**student.dict(), control_event="Homework", variant=variant)
+		pagesinfolist.append(pagevalue)
+
+	return pagesinfolist
+
+def test_generate_document_string(pagestyle, pagesinfo):
+
 	document = Document.Document("Layouts/sample.tex", pagestyle, pagesinfo)
 	test_log(document.generate_document_string())
+
 	return document
 
 def test_generate_document(document):
 	document.generate_document("Generated/generated.tex")
 
-test_structs()
+def test_students_variant(students, variant):
+	pass
+
+# test_structs()
 task1 = test_task1()
 task2 = test_task2()
 task1_information, task2_information = test_task_information(task1, task2)
 excercise = test_excercises(task1_information, task2_information)
-generated = test_variant(excercise)
-pageargs = test_parse_arguments_class(generated)
-pagestyle = test_generate_page(pageargs)
-document = test_generate_document_string(pagestyle, pageargs)
+variant = test_variant(excercise)
+pageargs = test_parse_arguments_class(variant)
+students = test_students_reader()
+pagestyle = test_generate_pagestyle()
+pagesinfo = test_generate_students_with_variants_pagesinfo(students, variant)
+test_generate_page(pagestyle, pageargs)
+document = test_generate_document_string(pagestyle, pagesinfo)
 test_generate_document(document)
