@@ -5,23 +5,27 @@ class PageValues(Functional.Struct):
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
 	Initial arguments:
-	- 'variant': Generated variant for this page (object of class GeneratedVariant) 
+	- 'variant': Variant for this page (object of class Variant) 
 	- 'entries': Dictionary of values, which will be used in generation
 	'''
 
 	def __init__(self, 
-			variant: Variant.GeneratedVariant, 
+			variant: Variant.Variant, 
 			**entries
 	):
 		super().__init__(**entries)
 		self.__variant__ = variant
 
 	@staticmethod
-	def from_struct(struct: Functional.Struct, variant: Variant.GeneratedVariant):
+	def from_struct(struct: Functional.Struct, variant: Variant.Variant):
 		return PageValues(variant=variant, entries=struct.dict())
 
-	def get_variant(self) -> Variant.GeneratedVariant:
+	def get_variant(self) -> Variant.Variant:
 		return self.__variant__
+
+	def generate_variant(self) -> Variant.GeneratedVariant:
+		'''Function to generate variant from this format'''
+		return self.__variant__.generate_variant()
 
 class PagesInformation(Functional.StructList):
 	'''
@@ -62,9 +66,13 @@ class PageStyle:
 		- 'format_arguments': Object of class PageValues. Containing page arguments with variant with excercises
 		'''
 
+		#Generate variant for this page from available variant format of PageValues object
+		variant = format_arguments.generate_variant()
+
 		excercises_formatted = []
-		#For all excercises from variant
-		for excercise in format_arguments.get_variant():
+		
+		#For all excercises from this generated variant
+		for excercise in variant:
 			
 			#First of all - format all tasks of this excercise
 			tasks_formatted = []
