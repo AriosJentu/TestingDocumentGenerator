@@ -1,6 +1,7 @@
 from . import Variant
+from . import Functional
 
-class PageArguments:
+class PageValues(Functional.Struct):
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
 	Initial arguments:
@@ -12,49 +13,29 @@ class PageArguments:
 			variant: Variant.GeneratedVariant, 
 			**entries
 	):
+		super().__init__(**entries)
 		self.__variant__ = variant
-		self.__dict__.update(entries)
-		self.__keys__ = entries.keys()
+
+	@staticmethod
+	def from_struct(struct: Functional.Struct, variant: Variant.GeneratedVariant):
+		return PageValues(variant=variant, entries=struct.dict())
 
 	def get_variant(self) -> Variant.GeneratedVariant:
 		return self.__variant__
 
-	def __iter__(self):
-		for i in self.__keys__:
-			yield self.__dict__.get(i)
-
-	def __len__(self):
-		return len(self.__keys__)
-
-	def __getitem__(self, item):
-		return self.__dict__.get(item)
-
-	def dict(self):
-		return {key: self.__dict__.get(key) for key in self.__keys__}
-
-class PagesInformation:
+class PagesInformation(Functional.StructList):
 	'''
 	PagesInformation - class which containing information about all available pages
 	Initial arguments:
-	- 'arguments': list of object of PageArguments class
+	- 'arguments': list of object of PageValues class
 	'''
-
-	def __init__(self, arguments: list[PageArguments] = []):
-		self.arguments = arguments
-
-	def add_argument(self, argument: PageArguments):
-		'''Function to add page argument into this object'''
-		self.arguments.append(argument)
-
-	def __iter__(self):
-		for argument in self.arguments:
-			yield argument
+	pass
 
 class PageStyle:
 	'''
 	PageStyle - class with style information about page of document
 	Inital arguments:
-	- 'variant_format_string': Format-type string with content of variant of the page. Must containing {excercises} element to replace them with excercises of the variant, and some other text {arg1}, {arg2} from executing PageArguments class, etc. Will be used in context of 'page_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
+	- 'variant_format_string': Format-type string with content of variant of the page. Must containing {excercises} element to replace them with excercises of the variant, and some other text {arg1}, {arg2} from executing PageValues class, etc. Will be used in context of 'page_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
 	- 'excercise_format_string': Format-type string for variant. Must containing {title} and {tasks} elements. Will be used in context of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
 	- 'tasks_format_string': Format-type string for tasks. Must containing {task} element. Will be used in context of 'tasks_format_string.format(task="This task")'
 	Available attributes:
@@ -73,12 +54,12 @@ class PageStyle:
 		self.tasks_format = tasks_format_string
 
 	def generate_page(self, 
-			format_arguments: PageArguments, 
+			format_arguments: PageValues, 
 	) -> str:
 		'''
 		Function to generate page string from format arguments and excercises. Put all in format string and return it.
 		Arguments:
-		- 'format_arguments': Object of class PageArguments. Containing page arguments with variant with excercises
+		- 'format_arguments': Object of class PageValues. Containing page arguments with variant with excercises
 		'''
 
 		excercises_formatted = []
@@ -120,7 +101,7 @@ class Document:
 	Available attributes:
 	- 'layout': Document layout file path
 	- 'pagestyle': Page style information object
-	- 'pagesinfo': List of informations about pages, objects of PageArguments class
+	- 'pagesinfo': List of informations about pages, objects of PageValues class
 	- 'contentstr': Content word in layout file
 	'''
 	def __init__(self, 
