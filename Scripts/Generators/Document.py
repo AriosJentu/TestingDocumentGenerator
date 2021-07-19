@@ -32,6 +32,24 @@ class PageArguments:
 	def dict(self):
 		return {key: self.__dict__.get(key) for key in self.__keys__}
 
+class PagesInformation:
+	'''
+	PagesInformation - class which containing information about all available pages
+	Initial arguments:
+	- 'arguments': list of object of PageArguments class
+	'''
+
+	def __init__(self, arguments: list[PageArguments] = []):
+		self.arguments = arguments
+
+	def add_argument(self, argument: PageArguments):
+		'''Function to add page argument into this object'''
+		self.arguments.append(argument)
+
+	def __iter__(self):
+		for argument in self.arguments:
+			yield argument
+
 class PageStyle:
 	'''
 	PageStyle - class with style information about page of document
@@ -97,7 +115,7 @@ class Document:
 	Inital arguments:
 	- 'layout_path': Path of the document layout. This layout need to contain 'page_word' inside, will be replaced with generating page
 	- 'page_style': Object of class PageStyle, which containing all information about style of the page
-	- 'pages_info': List of objects of class PageArguments, which containing all information about generating page arguments and all generated tasks for this arguments
+	- 'pages_info': Object of class PagesInformation, which containing all information about generating page arguments and all generated tasks for this arguments
 	- 'content_string': Word in layout file, which will be replaced with generation content. By default suppose to be "$CONTENT$"
 	Available attributes:
 	- 'layout': Document layout file path
@@ -108,7 +126,7 @@ class Document:
 	def __init__(self, 
 			layout_path: str,
 			page_style: PageStyle,
-			pages_info: list[PageArguments],
+			pages_info: PagesInformation,
 			content_string: str = "$CONTENT$",
 	):
 		self.layout = layout_path
