@@ -7,25 +7,18 @@ class Struct:
 
 	def __init__(self, **entries):
 		self.__dict__.update(entries)
-		self.__keys__ = list(entries.keys())
 
 	def __iter__(self):
-		for i in self.__keys__:
-			yield self.__dict__.get(i)
+		return iter(vars(self).values())
 
 	def __len__(self):
-		return len(self.__keys__)
+		return len(vars(self).keys())
 
 	def __getitem__(self, item):
-		if item in self.__keys__:
-			return self.__dict__.get(item)
-		else:
-			return None
+		return self.__dict__.get(item)
 
 	def add(self, **entries):
 		for key, value in entries.items():
-			if key not in self.__keys__:
-				self.__keys__.append(key)
 			self.__dict__[key] = value
 
 	@staticmethod
@@ -35,10 +28,10 @@ class Struct:
 
 	def dict(self):
 		'''Function to get struct as dictionary values'''
-		return {key: self.__dict__.get(key) for key in self.__keys__}
+		return dict(vars(self))
 
 	def __str__(self):
-		string = ", ".join([key + ": " +repr(self.__dict__.get(key)) for key in self.__keys__ ])
+		string = ", ".join([key + ": " +repr(self.__dict__.get(key)) for key in self.__dict__.keys()])
 		return f"Struct({string})"
 
 	def __repr__(self):
@@ -48,12 +41,18 @@ class StructList:
 	'''
 	StructList - class which containing infromation about some list of structs
 	'''
-	def __init__(self, structlist: list[Struct] = []):
+	def __init__(self, structlist: list[Struct] = None):
+		#in case of 'bug' of duplicating default argument
+		if structlist == None:
+			structlist = []
 		self.structlist = structlist
 
 	def append(self, struct: Struct):
 		'''Function to append struct into this list'''
 		self.structlist.append(struct)
+
+	def __len__(self):
+		return len(self.structlist)
 
 	def __iter__(self):
 		for struct in self.structlist:
