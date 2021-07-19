@@ -1,17 +1,17 @@
 from . import Excercises
 
-class GeneratedVariant:
+class GeneratedTest:
 	'''
-	GeneratedVariant - class of generated variant with excercises
+	GeneratedTest - class of generated test option with excercises
 	Available arguments:
-	- 'excercises': List of all generated excercises for this variant
+	- 'excercises': List of all generated excercises for this test option
 	'''
 
 	def __init__(self, excercises: list[Excercises.GeneratedExcercise]):
 		self.excercises = excercises
 
 	def get_excercises(self):
-		'''Function to get all generated excercises for this variant'''
+		'''Function to get all generated excercises for this test'''
 		return self.excercises
 
 	def __iter__(self):
@@ -19,9 +19,9 @@ class GeneratedVariant:
 		for excercise in self.excercises:
 			yield excercise
 
-class Variant:
+class Test:
 	'''
-	Variant - class which combine all available excercises to the one variant
+	Test - class which combine all available excercises to the one test option
 	Available arguments:
 	- 'excercises': List of all excercises (objects of class 'Excercise')
 	'''
@@ -30,15 +30,15 @@ class Variant:
 		self.excercises = excercises
 
 	def add(self, excercise: Excercises.Excercise):
-		'''Function to add excercise into this variant'''
+		'''Function to add excercise into this test'''
 		self.excercises.append(excercise)
 
 	def get_excercises(self):
-		'''Function to get all excercises formats for this variant'''
+		'''Function to get all excercises formats for this test'''
 		return self.excercises
 
-	def generate_variant(self) -> GeneratedVariant:
-		'''Function to generate variant from available excercises'''
+	def generate_test(self) -> GeneratedTest:
+		'''Function to generate test option from available excercises'''
 		
 		excercises = []
 		
@@ -46,4 +46,4 @@ class Variant:
 			generated_excercise = excercise.generate_tasks()
 			excercises.append(generated_excercise)
 
-		return GeneratedVariant(excercises)
+		return GeneratedTest(excercises)

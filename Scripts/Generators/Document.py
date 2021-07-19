@@ -1,27 +1,27 @@
-from . import Variant
+from . import Tests
 from . import Functional
 
 class PageValues(Functional.Struct):
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
 	Initial arguments:
-	- 'variant': Variant for this page (object of class Variant) 
+	- 'test_option': Test option for this page (object of class Test) 
 	- 'entries': Dictionary of values, which will be used in generation
 	'''
 
 	def __init__(self, 
-			variant: Variant.Variant, 
+			test_option: Tests.Test, 
 			**entries
 	):
 		super().__init__(**entries)
-		self.__variant__ = variant
+		self.__test_option__ = test_option
 
-	def get_variant(self) -> Variant.Variant:
-		return self.__variant__
+	def get_test(self) -> Tests.Test:
+		return self.__test_option__
 
-	def generate_variant(self) -> Variant.GeneratedVariant:
-		'''Function to generate variant from this format'''
-		return self.__variant__.generate_variant()
+	def generate_test(self) -> Tests.GeneratedTest:
+		'''Function to generate test option from this format'''
+		return self.__test_option__.generate_test()
 
 class PagesInformation(Functional.StructList):
 	'''
@@ -35,21 +35,21 @@ class PageStyle:
 	'''
 	PageStyle - class with style information about page of document
 	Inital arguments:
-	- 'variant_format_string': Format-type string with content of variant of the page. Must containing {excercises} element to replace them with excercises of the variant, and some other text {arg1}, {arg2} from executing PageValues class, etc. Will be used in context of 'page_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
-	- 'excercise_format_string': Format-type string for variant. Must containing {title} and {tasks} elements. Will be used in context of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
+	- 'test_format_string': Format-type string with content of test option of the page. Must containing {excercises} element to replace them with excercises of the test, and some other text {arg1}, {arg2} from executing PageValues class, etc. Will be used in context of 'test_format_string.format(**format_arguments.dict(), excercises="Some excercises")'
+	- 'excercise_format_string': Format-type string for test. Must containing {title} and {tasks} elements. Will be used in context of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
 	- 'tasks_format_string': Format-type string for tasks. Must containing {task} element. Will be used in context of 'tasks_format_string.format(task="This task")'
 	Available attributes:
-	- 'variant_format': Page format string
+	- 'test_option_format': Page format string
 	- 'excercise_format': Excercises format string
 	- 'tasks_format': Tasks format string
 	'''
 
 	def __init__(self, 
-			variant_format_string: str, 
+			test_format_string: str, 
 			excercise_format_string: str,
 			tasks_format_string: str = "{task}"
 	):
-		self.variant_format = variant_format_string
+		self.test_option_format = test_format_string
 		self.excercise_format = excercise_format_string
 		self.tasks_format = tasks_format_string
 
@@ -59,16 +59,16 @@ class PageStyle:
 		'''
 		Function to generate page string from format arguments and excercises. Put all in format string and return it.
 		Arguments:
-		- 'format_arguments': Object of class PageValues. Containing page arguments with variant with excercises
+		- 'format_arguments': Object of class PageValues. Containing page arguments with test option with excercises
 		'''
 
-		#Generate variant for this page from available variant format of PageValues object
-		variant = format_arguments.generate_variant()
+		#Generate test for this page from available test option format of PageValues object
+		generated_test = format_arguments.generate_test()
 
 		excercises_formatted = []
 		
-		#For all excercises from this generated variant
-		for excercise in variant:
+		#For all excercises from this generated test
+		for excercise in generated_test:
 			
 			#First of all - format all tasks of this excercise
 			tasks_formatted = []
@@ -90,7 +90,7 @@ class PageStyle:
 		page_excercises = "\n".join(excercises_formatted)
 
 		#Put this content inside
-		page_content = self.variant_format.format(**format_arguments.dict(), excercises=page_excercises)
+		page_content = self.test_option_format.format(**format_arguments.dict(), excercises=page_excercises)
 
 		return page_content
 

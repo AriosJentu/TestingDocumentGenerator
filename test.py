@@ -1,6 +1,6 @@
 import Scripts.Generators.Tasks as Tasks
 import Scripts.Generators.Excercises as Excercises
-import Scripts.Generators.Variant as Variant
+import Scripts.Generators.Tests as Tests
 import Scripts.Generators.Document as Document
 import Scripts.Generators.Functional as Functional
 import Scripts.EntryStudents as EntryStudents
@@ -55,25 +55,25 @@ def test_task1():
 	return task1
 
 def test_task2():
-	def task2variant5_update_task(string):
+	def task2test5_update_task(string):
 		return string.replace("Task", "Updated Task")
 
-	task2variants = []
+	task2tasks = []
 
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant1.tex"))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant2.tex", 2))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant3.tex", 2))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant4.tex"))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant5.tex"))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant6.tex"))
-	task2variants.append(Tasks.SpecificTaskInfo("Tasks/Special/variant7.tex"))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant1.tex"))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant2.tex", 2))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant3.tex", 2))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant4.tex"))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant5.tex"))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant6.tex"))
+	task2tasks.append(Tasks.SpecificTaskInfo("Tasks/Special/variant7.tex"))
 
-	task2variants[4].set_updater_function(task2variant5_update_task)
+	task2tasks[4].set_updater_function(task2test5_update_task)
 
-	task2 = Tasks.SpecificTasks(task2variants)
+	task2 = Tasks.SpecificTasks(task2tasks)
 	task2.read_information()
 	for i in range(24):
-		test_log(repr(task2.generate_task()), [i.get_possible_appear_count() for i in task2variants])
+		test_log(repr(task2.generate_task()), [i.get_possible_appear_count() for i in task2tasks])
 
 	return task2
 
@@ -98,21 +98,21 @@ def test_excercises(task1_information, task2_information):
 
 	return excercise
 
-def test_variant(excercise):
-	variant = Variant.Variant([excercise, excercise])
-	generated = variant.generate_variant()
+def test_testoption(excercise):
+	testoption = Tests.Test([excercise, excercise])
+	generated = testoption.generate_test()
 	
 	for excercise in generated:
 		test_log(excercise)
 
-	return variant
+	return testoption
 
-def test_parse_arguments_class(variant):
-	pageargs = Document.PageValues(group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)
+def test_parse_arguments_class(testoption):
+	pageargs = Document.PageValues(group="M0744-228.13.37", student="AriosJentu", control_event="Homework", test_option=testoption)
 	
 	test_log(*pageargs)
 	test_log(pageargs.dict())
-	test_log(pageargs.get_variant())
+	test_log(pageargs.get_test())
 	
 	return pageargs
 
@@ -139,12 +139,12 @@ def test_students_reader():
 
 	return students
 
-def test_generate_students_with_variants_pagesinfo(students, variant):
+def test_generate_students_with_tests_pagesinfo(students, testoption):
 	
 	pagesinfolist = Document.PagesInformation()
 
 	for student in students:
-		pagevalue = Document.PageValues(**student.dict(), control_event="Homework", variant=variant)
+		pagevalue = Document.PageValues(**student.dict(), control_event="Homework", test_option=testoption)
 		pagesinfolist.append(pagevalue)
 
 	return pagesinfolist
@@ -159,19 +159,16 @@ def test_generate_document_string(pagestyle, pagesinfo):
 def test_generate_document(document):
 	document.generate_document("Generated/generated.tex")
 
-def test_students_variant(students, variant):
-	pass
-
 # test_structs()
 task1 = test_task1()
 task2 = test_task2()
 task1_information, task2_information = test_task_information(task1, task2)
 excercise = test_excercises(task1_information, task2_information)
-variant = test_variant(excercise)
-pageargs = test_parse_arguments_class(variant)
+testoption = test_testoption(excercise)
+pageargs = test_parse_arguments_class(testoption)
 students = test_students_reader()
 pagestyle = test_generate_pagestyle()
-pagesinfo = test_generate_students_with_variants_pagesinfo(students, variant)
+pagesinfo = test_generate_students_with_tests_pagesinfo(students, testoption)
 test_generate_page(pagestyle, pageargs)
 document = test_generate_document_string(pagestyle, pagesinfo)
 test_generate_document(document)
