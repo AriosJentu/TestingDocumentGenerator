@@ -16,10 +16,6 @@ class PageValues(Functional.Struct):
 		super().__init__(**entries)
 		self.__variant__ = variant
 
-	@staticmethod
-	def from_struct(struct: Functional.Struct, variant: Variant.Variant):
-		return PageValues(variant=variant, entries=struct.dict())
-
 	def get_variant(self) -> Variant.Variant:
 		return self.__variant__
 
@@ -31,7 +27,7 @@ class PagesInformation(Functional.StructList):
 	'''
 	PagesInformation - class which containing information about all available pages
 	Initial arguments:
-	- 'arguments': list of object of PageValues class
+	- 'structlist': list of object of PageValues class
 	'''
 	pass
 
