@@ -2,10 +2,23 @@ import Scripts.Generators.Tasks as Tasks
 import Scripts.Generators.Excercises as Excercises
 import Scripts.Generators.Variant as Variant
 import Scripts.Generators.Document as Document
+import Scripts.Generators.Functional as Functional
 
 def test_log(*args, **kwargs):
 	return
 	#return print(*args, **kwargs)
+
+def test_structs():
+	
+	x = Functional.Struct(a="1", b=2)
+	y = Functional.Struct.from_struct(x)
+	y.a = 12
+	y.add(c=12)
+	y.add(**{"d": 14})
+
+	test_log(x)
+	test_log(x.dict())
+	test_log(y)
 
 def test_task1():
 	def task1_update_task(string):
@@ -73,7 +86,7 @@ def test_variant(excercise):
 	return generated
 
 def test_parse_arguments_class(variant):
-	pageargs = Document.PageArguments(student_group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)
+	pageargs = Document.PageValues(student_group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)
 	
 	test_log(*pageargs)
 	test_log(pageargs.dict())
@@ -96,13 +109,15 @@ def test_generate_page(pageargs):
 
 def test_generate_document_string(pagestyle, pageargs):
 
-	document = Document.Document("Layouts/sample.tex", pagestyle, [pageargs, pageargs])
+	pagesinfo = Document.PagesInformation([pageargs, pageargs])
+	document = Document.Document("Layouts/sample.tex", pagestyle, pagesinfo)
 	test_log(document.generate_document_string())
 	return document
 
 def test_generate_document(document):
 	document.generate_document("Generated/generated.tex")
 
+test_structs()
 task1 = test_task1()
 task2 = test_task2()
 task1_information, task2_information = test_task_information(task1, task2)
@@ -112,4 +127,3 @@ pageargs = test_parse_arguments_class(generated)
 pagestyle = test_generate_page(pageargs)
 document = test_generate_document_string(pagestyle, pageargs)
 test_generate_document(document)
-
