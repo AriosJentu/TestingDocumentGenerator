@@ -1,4 +1,4 @@
-from . import Functions
+from . import Functional
 
 class TasksException(Exception):
 	pass
@@ -123,7 +123,7 @@ class BasicTasks(Tasks):
 		
 		with open(self.filepath) as file:
 			#Read tasks with non-comment lines, and only if them non-empty
-			self.all_tasks = [Task(i) for i in file.readlines() if not Functions.Functions.is_empty_string(i)]
+			self.all_tasks = [Task(i) for i in file.readlines() if not Functional.Functions.is_empty_string(i)]
 			self.tasks_count  = len(self.all_tasks)
 			self.unused_tasks = list(range(self.tasks_count))
 			self.cache_used = []
@@ -134,7 +134,7 @@ class BasicTasks(Tasks):
 
 	def __get_unused_random_index__(self) -> int:
 		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
-		return Functions.Functions.get_unused_index(self.unused_tasks, self.cache_used)
+		return Functional.Functions.get_unused_index(self.unused_tasks, self.cache_used)
 
 	def generate_task(self) -> Task:
 		'''Function to choose random task from list of tasks. Must return object of Task class'''
@@ -259,7 +259,7 @@ class SpecificTasks(Tasks):
 
 	def __get_unused_random_index__(self) -> int:
 		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
-		return Functions.Functions.get_unused_index(self.unused_tasks, self.cache_used)
+		return Functional.Functions.get_unused_index(self.unused_tasks, self.cache_used)
 
 	def __push_in_cache__(self, taskindex: int):
 		'''Function to push tasks in cache of used tasks'''
