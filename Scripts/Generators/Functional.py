@@ -30,7 +30,7 @@ class Struct:
 
 	@staticmethod
 	def from_struct(struct: 'Struct'):
-		'''Function to generate struct from available struct'''
+		'''Function to generate new struct from available struct'''
 		return Struct(**struct.dict())
 
 	def dict(self):

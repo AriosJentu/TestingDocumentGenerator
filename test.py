@@ -83,7 +83,7 @@ def test_variant(excercise):
 	for excercise in generated:
 		test_log(excercise)
 
-	return generated
+	return variant
 
 def test_parse_arguments_class(variant):
 	pageargs = Document.PageValues(student_group="M0744-228.13.37", student="AriosJentu", control_event="Homework", variant=variant)

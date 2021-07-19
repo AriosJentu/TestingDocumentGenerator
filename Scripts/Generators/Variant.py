@@ -26,8 +26,16 @@ class Variant:
 	- 'excercises': List of all excercises (objects of class 'Excercise')
 	'''
 
-	def __init__(self, excercises: list[Excercises.Excercise]):
+	def __init__(self, excercises: list[Excercises.Excercise] = []):
 		self.excercises = excercises
+
+	def add(self, excercise: Excercises.Excercise):
+		'''Function to add excercise into this variant'''
+		self.excercises.append(excercise)
+
+	def get_excercises(self):
+		'''Function to get all excercises formats for this variant'''
+		return self.excercises
 
 	def generate_variant(self) -> GeneratedVariant:
 		'''Function to generate variant from available excercises'''
