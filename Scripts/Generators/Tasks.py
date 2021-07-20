@@ -230,12 +230,18 @@ class SpecificTasks(Tasks):
 	- 'unused_tasks': Numbers of tasks in all_tasks list
 	'''
 
-	def __init__(self, list_tasks: list[SpecificTaskInfo]):
+	def __init__(self, list_tasks: list[SpecificTaskInfo] = None):
+		if list_tasks == None:
+			list_tasks = []
 
 		super().__init__()
 		self.tasks = list_tasks
 		self.available_tasks = []
 		self.unused_tasks = []
+
+	def append(self, taskinfo: SpecificTaskInfo):
+		'''Special method for this class - it's possible to append paths of tasks into this class of tasks'''
+		self.tasks.append(taskinfo)
 
 	def read_information(self):
 		'''Function to read all information about tasks. Must be callable only ones'''
@@ -309,6 +315,10 @@ class TasksInformation:
 	def __init__(self, tasks: Tasks, repeating: int = 1):
 		self.tasks = tasks
 		self.repeating = max(1, int(repeating))
+
+	def get_tasks(self):
+		'''Function to get list of all tasks in this information object'''
+		return self.tasks
 
 	def generate_tasks(self) -> list[Task]:
 		'''Function to generate list of tasks for this 'Tasks' class. Returns list of objects of Task class'''

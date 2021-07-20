@@ -63,6 +63,10 @@ class Excercise:
 		#Updating title string function
 		self.updater = lambda titlestring: titlestring
 
+	def get_tasks_information_list(self):
+		'''Function to get tasks information list'''
+		return self.tasks_info_list
+
 	def set_title_updater_function(self, updater = lambda titlestring: titlestring):
 		'''Function to set updating excercise title string function. Without arguments it reseting function to default - nothing to update'''
 		self.updater = updater
