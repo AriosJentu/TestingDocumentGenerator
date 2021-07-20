@@ -1,7 +1,7 @@
 import Scripts.Generators.Tasks as Tasks
 import Scripts.Generators.Excercises as Excercises
 import Scripts.Generators.Tests as Tests
-import Scripts.Generators.Document as Document
+import Scripts.Generators.Documents as Documents
 import Scripts.Generators.Functional as Functional
 import Scripts.EntryStudents as EntryStudents
 
@@ -28,19 +28,19 @@ def test_structs():
 	structlist1.append(y)
 
 	for struct in structlist1:
-		print(struct)
+		test_log(struct)
 
-	print()
+	test_log()
 
 	structlist2 = Functional.StructList()
 	structlist2.append(z)
 
 	for struct in structlist2:
-		print(struct)
+		test_log(struct)
 
-	print(structlist1)
-	print(structlist2)
-	print(structlist1 == structlist2)
+	test_log(structlist1)
+	test_log(structlist2)
+	test_log(structlist1 == structlist2)
 
 def test_task1():
 	def task1_update_task(string):
@@ -108,7 +108,7 @@ def test_testoption(excercise):
 	return testoption
 
 def test_parse_arguments_class(testoption):
-	pageargs = Document.PageValues(group="M0744-228.13.37", student="AriosJentu", control_event="Homework", test_option=testoption)
+	pageargs = Documents.PageValues(group="M0744-228.13.37", student="AriosJentu", control_event="Homework", event_number=1, test_option=testoption)
 	
 	test_log(*pageargs)
 	test_log(pageargs.dict())
@@ -118,11 +118,11 @@ def test_parse_arguments_class(testoption):
 
 def test_generate_pagestyle():
 
-	page_format = "\t\\generatepage{{{control_event}}}{{{student}}}{{{group}}}{{\n{excercises}\n\t}}\n"
+	test_format = "\t\\generatepage{{{control_event}}} #{{{event_number}}}{{{student}}}{{{group}}}{{\n{excercises}\n\t}}\n"
 	excercise_format = "\t\t\\item {title}\n{tasks}"
 	tasks_format = "\n\t\t\t{task}" 
 
-	pagestyle = Document.PageStyle(page_format, excercise_format, tasks_format)
+	pagestyle = Documents.PageStyle(test_format, excercise_format, tasks_format)
 	return pagestyle
 
 
@@ -141,17 +141,19 @@ def test_students_reader():
 
 def test_generate_students_with_tests_pagesinfo(students, testoption):
 	
-	pagesinfolist = Document.PagesInformation()
+	pagesinfolist = Documents.PagesInformation()
 
 	for student in students:
-		pagevalue = Document.PageValues(**student.dict(), control_event="Homework", test_option=testoption)
+		pagevalue = Documents.PageValues(**student.dict(), control_event="Homework", event_number=1, test_option=testoption)
 		pagesinfolist.append(pagevalue)
 
 	return pagesinfolist
 
 def test_generate_document_string(pagestyle, pagesinfo):
 
-	document = Document.Document("Layouts/sample.tex", pagestyle, pagesinfo)
+	document_layout = Documents.DocumentLayout("Layouts/sample.tex", pagestyle)
+
+	document = Documents.Document(document_layout, pagesinfo)
 	test_log(document.generate_document_string())
 
 	return document
