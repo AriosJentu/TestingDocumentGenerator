@@ -94,30 +94,59 @@ class PageStyle:
 
 		return page_content
 
-class Document:
+class DocumentLayout:
 	'''
-	Document - class to work with document using any information about it
-	Inital arguments:
+	DocumentLayout - class to work with document layout information
+	Initial arguments:
 	- 'layout_path': Path of the document layout. This layout need to contain 'page_word' inside, will be replaced with generating page
 	- 'page_style': Object of class PageStyle, which containing all information about style of the page
-	- 'pages_info': Object of class PagesInformation, which containing all information about generating page arguments and all generated tasks for this arguments
 	- 'content_string': Word in layout file, which will be replaced with generation content. By default suppose to be "$CONTENT$"
 	Available attributes:
 	- 'layout': Document layout file path
 	- 'pagestyle': Page style information object
-	- 'pagesinfo': List of informations about pages, objects of PageValues class
 	- 'contentstr': Content word in layout file
 	'''
 	def __init__(self, 
 			layout_path: str,
 			page_style: PageStyle,
-			pages_info: PagesInformation,
 			content_string: str = "$CONTENT$",
 	):
 		self.layout = layout_path
 		self.pagestyle = page_style
-		self.pagesinfo = pages_info
 		self.contentstr = content_string
+
+	def read_layout(self) -> str:
+		'''Function to read document layout'''
+		layout = ""
+		with open(self.layout) as file:
+			layout = file.read()
+
+		return layout
+
+	def generate_page(self, page_value):
+		return self.pagestyle.generate_page(page_value)
+
+	def get_document_string_wth_content(self, content: str) -> str:
+		'''Function to generate document with content from layout'''
+		layout = self.read_layout()
+		return layout.replace(self.contentstr, content)
+
+class Document:
+	'''
+	Document - class to work with document using any information about it
+	Inital arguments:
+	- 'layout': Object of class DocumentLayout, which contains information about document layout and it's content string
+	- 'pages_info': Object of class PagesInformation, which containing all information about generating page arguments and all generated tasks for this arguments
+	Available attributes:
+	- 'layout': Document layout object
+	- 'pagesinfo': List of informations about pages, objects of PageValues class
+	'''
+	def __init__(self, 
+			layout: DocumentLayout,
+			pages_info: PagesInformation,
+	):
+		self.layout = layout
+		self.pagesinfo = pages_info
 
 	def generate_content(self) -> str:
 		'''Function to generate pages content for document from available info'''
@@ -125,9 +154,9 @@ class Document:
 		document_content_list = []
 
 		#For every page generate content
-		for pageargument in self.pagesinfo:
+		for page_value in self.pagesinfo:
 			
-			page_content = self.pagestyle.generate_page(pageargument)
+			page_content = self.layout.generate_page(page_value)
 			document_content_list.append(page_content)
 
 		#Then merge it
@@ -137,15 +166,11 @@ class Document:
 	def generate_document_string(self) -> str:
 		'''Function to generate document using available information'''
 
-		#Open layout document to read layout:
-		with open(self.layout) as file:
-			layout_string = file.read()
-
 		#Generate content and replace layout's content_string with content
 		content = self.generate_content()
-		document = layout_string.replace(self.contentstr, content)
+		document_string = self.layout.get_document_string_wth_content(content)
 
-		return document
+		return document_string
 
 	def generate_document(self, filename: str):
 		'''Function to generate document file with available information'''
