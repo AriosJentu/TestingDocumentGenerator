@@ -7,7 +7,7 @@ class EntriesReader:
 	- 'filepath': Path of the file where information will be read
 	'''
 
-	def __init__(self, filepath: str):
+	def __init__(self, filepath: str = ""):
 		self.filepath = filepath
 
 	def read(self):
