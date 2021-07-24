@@ -48,17 +48,23 @@ class Excercise:
 	Initial arguments:
 	- 'tasks_info_list': List of the tasks information (list of objects of class 'TasksInformation')
 	- 'title': Title string of the excercise. Can be empty in case of specific tasks, for example
+	- 'shuffle': Shuffle generated tasks for this excercise
 	Available attributes:
 	- 'tasks_info_list': List of the tasks information
 	- 'title': Title string of the excercise
 	- 'updater': Function which updates titles of the excercise. It's argument is 'title' of the excercise, and function must return string with updated text
 	'''
 	def __init__(self, 
-			tasks_info_list: list[Tasks.TasksInformation], 
-			title: str = ""
+			tasks_info_list: list[Tasks.TasksInformation] = None, 
+			title: str = "",
+			shuffle: bool = False
 	):
+		if not tasks_info_list:
+			tasks_info_list = []
+
 		self.tasks_info_list = tasks_info_list
 		self.title = title
+		self.shuffle = shuffle
 
 		#Updating title string function
 		self.updater = lambda titlestring: titlestring
@@ -75,6 +81,10 @@ class Excercise:
 		'''Function to set updating excercise title string function. Without arguments it reseting function to default - nothing to update'''
 		self.updater = updater
 
+	def set_shuffle_state(self, shuffle: bool = False):
+		'''Function to set excercises shuffled when generate'''
+		self.shuffle = shuffle
+
 	def generate_tasks(self) -> GeneratedExcercise:
 		'''Function to generate list of tasks for this excercise. Also this function updating title of the excercise. Returns object of 'GeneratedExcercise' class'''
 
@@ -86,4 +96,8 @@ class Excercise:
 		#Update title of the excercise
 		title = self.updater(self.title)
 
-		return GeneratedExcercise(tasks, title)
+		generated = GeneratedExcercise(tasks, title)
+		if self.shuffle:
+			generated.shuffle_tasks()
+
+		return generated
