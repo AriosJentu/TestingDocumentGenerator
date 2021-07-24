@@ -12,7 +12,7 @@ class AssignmentsListClass:
 			self.dict[key] = {}
 
 		#Append assignment with it's number inside class
-		self.dict[key][1] = assignment_class
+		self.dict[key][assignment_class.number] = assignment_class
 
 	def get(self, key: str, number: int):
 		'''Function to get assignment with it's key and number'''
