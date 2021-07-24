@@ -58,5 +58,5 @@ class DemontrativeWork(Assignments.Assignment):
 	document_entry = Functional.Struct(control_event=control_event, event_number=event_number)
 
 work = DemontrativeWork()
-work.set_entries(EntryStudents.StudentsReader(students_location))
+work.set_entries(students_entries)
 work.generate("generated.tex")
