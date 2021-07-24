@@ -28,7 +28,7 @@ def task1_update_task(string):
 def task2test5_update_task(string):
 	return string.replace("Task", "Updated Task")
 
-task1 = Tasks.BasicTasks("Tasks/test.tex")
+task1 = Tasks.BasicTasks("Information/Tasks/Test1/tasks1.tex")
 task1.set_updater_function(task1_update_task)
 
 task2 = Tasks.SpecificTasks()
@@ -38,7 +38,7 @@ for i in range(7):
 	if i == 1 or i == 2:
 		appearing_count = 2
 
-	task = Tasks.SpecificTaskInfo(f"Tasks/Special/variant{i+1}.tex", appearing_count)
+	task = Tasks.SpecificTaskInfo(f"Information/Tasks/Test1/Special/variant{i+1}.tex", appearing_count)
 	if i == 4:
 		task.set_updater_function(task2test5_update_task)
 	
@@ -56,6 +56,7 @@ class DemontrativeWork(Assignments.Assignment):
 	layout = Documents.DocumentLayout(layout_location, pagestyle)
 	test = Tests.Test([excercise1, excercise2])
 	document_entry = Functional.Struct(control_event=control_event, event_number=event_number)
+	prefix = "sample"
 
 work = DemontrativeWork()
 work.set_entries(students_entries)

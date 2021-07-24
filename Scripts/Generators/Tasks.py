@@ -242,7 +242,6 @@ class SpecificTasks(Tasks):
 
 		super().__init__()
 		self.all_tasks = tasks_list
-		print(tasks_list)
 
 	def append(self, taskinfo: SpecificTaskInfo):
 		'''Special method for this class - it's possible to append paths of tasks into this class of tasks'''
