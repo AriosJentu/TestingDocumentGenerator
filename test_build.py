@@ -1,8 +1,12 @@
-import Information.Documents.Test1 as Test1
+import Information.Documents.AssignmentsList as AssignmentsList
+import Scripts.EntryStudents as EntryStudents
 
 students_location = "Information/Students/students.txt"
-students_entries = Test1.Imports.EntryStudents.StudentsReader(students_location)
+students_entries = EntryStudents.EmptyStudents()
+students_entries.ENTRIES_COUNT = 20
 
-work = Test1.Test1()
+Test1 = AssignmentsList.AssignmentsList.get("t", 1)
+
+work = Test1()
 work.set_entries(students_entries)
 work.generate("generated_new.tex")
