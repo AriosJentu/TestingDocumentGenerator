@@ -76,3 +76,8 @@ class Functions:
 			return Functions.get_unused_index(from_list, cache_list)
 		else:
 			return randindex
+
+	@staticmethod
+	def remove_new_lines(string):
+		'''Function to remove new lines'''
+		return string.replace("\n", "")
