@@ -22,13 +22,13 @@ class Assignment:
 
 	layout: Documents.DocumentLayout
 	test: Tests.Test
-	entries: Entries.EntriesReader
+	entries: Entries.Entries
 	document_entry: Functional.Struct = Functional.Struct()
 	prefix: str = "prefix"
 	number: int = 0
 	generation_folder: str = "Generated/"
 
-	def set_entries(self, entries: Entries.EntriesReader):
+	def set_entries(self, entries: Entries.Entries):
 		self.entries = entries
 
 	def generate(self, output_file: str = None):
