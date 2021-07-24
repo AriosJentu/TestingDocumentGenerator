@@ -59,4 +59,4 @@ class DemontrativeWork(Assignments.Assignment):
 
 work = DemontrativeWork()
 work.set_entries(EntryStudents.StudentsReader(students_location))
-work.generate("Generated/generated.tex")
+work.generate("generated.tex")
