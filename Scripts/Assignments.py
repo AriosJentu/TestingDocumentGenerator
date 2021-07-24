@@ -11,6 +11,7 @@ class Assignment:
 	- 'test' - 'Test' with it's 'Excercises', 
 	- 'entries' - 'Entries' with their 'generate_information' method. This value can't be default, because it's generating by user's asking. For this situation exist method 'set_entries'
 	- 'document_entry' - 'Struct' with additional information, which presented in pagestyle excercises format string. This argument may not be presented in class, by default it's empty entry
+	- 'prefix' - String with prefix of the assignment. Must contain only latin symbols, and represent logic of the assignment. For example - assignment is "Test", prefix should be 'test'.
 	- 'generation_folder' - String with folder name where generated files will be posted. By default it's 'Generated/' folder, but can be empty.
 	Can be read in that order:
 	Specific document 'layout' for every page must contain format of 'test' for every possible 'entries'. Every document must contain it's own default 'document_entries', which just appends to every entry.
@@ -22,6 +23,7 @@ class Assignment:
 	test: Tests.Test
 	entries: Entries.EntriesReader
 	document_entry: Functional.Struct = Functional.Struct()
+	prefix: str = "prefix"
 	generation_folder: str = "Generated/"
 
 	def set_entries(self, entries: Entries.EntriesReader):
