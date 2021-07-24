@@ -74,13 +74,12 @@ class TasksGetter:
 
 		#If cache is full, decrease cache size. Maximal cache size must be minimal value between defined cache size, and count of tasks minus one (because if count of tasks less than cache size, it can overflow when searching tasks)
 		max_cache_size = max(0, min(len(self.tasks)-1, self.CACHE_SIZE))	#Lowest border is 0, because if tasks count is 0, negative value may give all array except last item
-		if len(self.cache_list) > max_cache_size:
-			self.cache_list = self.cache_list[:max_cache_size]
-
-		if len(self.cache_list) == max_cache_size:
-			self.cache_list = self.cache_list[1:]
 
 		self.cache_list.append(taskindex)
+		if len(self.cache_list) >= max_cache_size:
+			#If increased size is greater than possible maxinal cache size, decreace cache size
+			start = len(self.cache_list) - max_cache_size + 1
+			self.cache_list = self.cache_list[start:]
 
 	def __refresh_unused_tasks__(self):
 		'''Function to refresh list of unused tasks. Must be used only when this list is empty'''
