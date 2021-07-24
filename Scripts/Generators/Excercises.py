@@ -63,6 +63,10 @@ class Excercise:
 		#Updating title string function
 		self.updater = lambda titlestring: titlestring
 
+	def append(self, tasks_info: Tasks.TasksInformation):
+		'''Function to append task information into excercise'''
+		self.tasks_info_list.append(tasks_info)
+
 	def get_tasks_information_list(self):
 		'''Function to get tasks information list'''
 		return self.tasks_info_list
