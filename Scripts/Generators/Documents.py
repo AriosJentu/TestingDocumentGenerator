@@ -109,7 +109,7 @@ class DocumentLayout:
 	def __init__(self, 
 			layout_path: str,
 			page_style: PageStyle,
-			content_string: str = "$CONTENT$",
+			content_string: str = "#CONTENT#",
 	):
 		self.layout = layout_path
 		self.pagestyle = page_style
