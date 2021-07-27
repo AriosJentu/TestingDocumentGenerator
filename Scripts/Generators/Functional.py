@@ -1,4 +1,5 @@
 import random
+import os.path
 
 class Struct:
 	'''
@@ -81,3 +82,31 @@ class Functions:
 	def remove_new_lines(string):
 		'''Function to remove new lines'''
 		return string.replace("\n", "")
+
+	@staticmethod
+	def crop_list_size(plist, size):
+		'''Function to crop list size to fixed'''
+		if len(plist) < size:
+			plist = plist + [None]*size-len(plist)
+
+		return plist[:size]
+
+class Path:
+	'''
+	Path - class to work with path
+	'''
+	def __init__(self, output_file):
+		self.output_file = output_file
+
+	def get_full_path(self):
+		return self.output_file
+
+	def add_path(self, path):
+		'''Function to append some folders befor current output file'''
+		self.output_file = os.path.join(path, self.output_file)
+	
+	def add_file_prefix(self, prefix):
+		'''Function to add prefix to file'''
+		head, tail = os.path.split(self.output_file)
+		tail = prefix + tail
+		self.output_file = os.path.join(head, tail)
