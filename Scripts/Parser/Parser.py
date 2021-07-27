@@ -27,7 +27,7 @@ class Parser:
 		return values
 
 	@staticmethod
-	def parse_assignments_argument(string) -> [str, list[int]]:
+	def parse_assignments_argument(string) -> (str, list[int]):
 		'''
 		Function to parse input string to find specific assignment documents with pattern.
 		Pattern would prefer next form:

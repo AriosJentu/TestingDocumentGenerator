@@ -311,3 +311,9 @@ class TasksInformation:
 
 		return tasks
 
+	def __str__(self):
+		return f"TasksInformation:\nR - {self.repeating}: {self.tasks}"
+
+	def __repr__(self):
+		return f"TasksInformation({self.repeating}, {self.tasks})"
+
