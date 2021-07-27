@@ -1,5 +1,3 @@
-import os.path
-
 from .Generators import Tests
 from .Generators import Entries
 from .Generators import Documents
@@ -37,10 +35,9 @@ class Assignment:
 		'''
 		Function to generate Assignment document for various 'entries'. 
 		Arguments:
-		- 'output_file': output file name. Will be generated in special generation folder. 
-		If there is no output file, then it may also returns only content via argument. 
-
-		If there is no output, function returns string of all document
+		- 'output_file': output file name. Will be generated in special generation folder. If false, return two possibilities, which depends on only_content argument.
+		- 'with_prefix': information about generating file with prefix. By default it's true. Append in filename at the beginning information about assignment prefix and assignment number
+		- 'only_content':  works only if there is no output_file argument. Returns string of the content of the document, if true, otherwice return all document string (may be posted in file)
 		'''
 
 		#First of all, generate entries elements
