@@ -1,9 +1,9 @@
-import Scripts.Generators.Tasks as Tasks
-import Scripts.Generators.Excercises as Excercises
-import Scripts.Generators.Tests as Tests
-import Scripts.Generators.Documents as Documents
-import Scripts.Generators.Functional as Functional
-import Scripts.EntryStudents as EntryStudents
+from ..Scripts.Generators import Tasks
+from ..Scripts.Generators import Excercises
+from ..Scripts.Generators import Tests
+from ..Scripts.Generators import Documents
+from ..Scripts.Generators import Functional
+from ..Scripts import EntryStudents
 
 def test_log(*args, **kwargs):
 	return
@@ -161,16 +161,17 @@ def test_generate_document_string(pagestyle, pagesinfo):
 def test_generate_document(document):
 	document.generate_document("Generated/generated.tex")
 
-# test_structs()
-task1 = test_task1()
-task2 = test_task2()
-task1_information, task2_information = test_task_information(task1, task2)
-excercise = test_excercises(task1_information, task2_information)
-testoption = test_testoption(excercise)
-pageargs = test_parse_arguments_class(testoption)
-students = test_students_reader()
-pagestyle = test_generate_pagestyle()
-pagesinfo = test_generate_students_with_tests_pagesinfo(students, testoption)
-test_generate_page(pagestyle, pageargs)
-document = test_generate_document_string(pagestyle, pagesinfo)
-test_generate_document(document)
+def run_test()
+	# test_structs()
+	task1 = test_task1()
+	task2 = test_task2()
+	task1_information, task2_information = test_task_information(task1, task2)
+	excercise = test_excercises(task1_information, task2_information)
+	testoption = test_testoption(excercise)
+	pageargs = test_parse_arguments_class(testoption)
+	students = test_students_reader()
+	pagestyle = test_generate_pagestyle()
+	pagesinfo = test_generate_students_with_tests_pagesinfo(students, testoption)
+	test_generate_page(pagestyle, pageargs)
+	document = test_generate_document_string(pagestyle, pagesinfo)
+	test_generate_document(document)
