@@ -36,6 +36,8 @@ tasks1.set_updater_function(tasks1_update_task)
 tasks2p1 = Imports.Tasks.BasicTasks(prefix+"tasks2.tex")
 tasks2p2 = Imports.Tasks.BasicTasks(prefix+"tasks3.tex")
 
+tasks2 = Imports.Tasks.MultiTasks([tasks2p1, tasks2p2])
+
 #Third task will be specific task
 tasks3 = Imports.Tasks.SpecificTasks()
 for i in range(7):
@@ -51,7 +53,7 @@ for i in range(7):
 
 #Generate information arrays for the tasks, with repeatings
 tasks1info = [Imports.Tasks.TasksInformation(tasks1)]
-tasks2info = [Imports.Tasks.TasksInformation(tasks2p1), Imports.Tasks.TasksInformation(tasks2p2, 2)]
+tasks2info = [Imports.Tasks.TasksInformation(tasks2, 3)]
 tasks3info = [Imports.Tasks.TasksInformation(tasks3)]
 
 #Generate excercises with this tasks information
