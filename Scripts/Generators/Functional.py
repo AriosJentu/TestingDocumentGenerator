@@ -84,10 +84,11 @@ class Functions:
 		return string.replace("\n", "")
 
 	@staticmethod
-	def crop_list_size(plist, size):
+	def crop_list_size(plist: list, size: int):
 		'''Function to crop list size to fixed'''
+
 		if len(plist) < size:
-			plist = plist + [None]*size-len(plist)
+			plist = plist + [None]*(size-len(plist))
 
 		return plist[:size]
 
@@ -110,3 +111,7 @@ class Path:
 		head, tail = os.path.split(self.output_file)
 		tail = prefix + tail
 		self.output_file = os.path.join(head, tail)
+
+	@staticmethod
+	def isfile(string):
+		return os.path.isfile(string)
