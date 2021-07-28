@@ -194,7 +194,6 @@ class AssignmentsList(Functional.StructList):
 
 		#First of all - sort all files to layouts
 		self.order_by_layout()
-		print(self.dict_assignments)
 
 		documents = []
 		#For all prefix in assignments

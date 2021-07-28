@@ -5,6 +5,6 @@ AssignmentsInformation = Assignments.AssignmentsInformationClass()
 from . import Test1
 from . import Test2
 
-#Append assignment Test1 into Assignments Information List
+#Append assignments into Assignments Information List
 AssignmentsInformation.append(Test1.Test1, "t")
 AssignmentsInformation.append(Test2.Test2, "t")
