@@ -15,6 +15,23 @@ class EmptyStudents(Entries.Entries):
 
 		return structs
 
+	def get_group_name(self, default: str = None) -> str:
+		if not default:
+			default = f"n{self.ENTRIES_COUNT}students"
+		return default
+
+class StudentFromValues(Entries.EntryFromValues):
+	'''
+	StudentsFromValues - class with using information about students from struct
+	Initial arguments:
+	- 'element': dictionary or Struct of student format 
+	'''
+
+	def get_group_name(self, default: str = None) -> str:
+		if not default:
+			default = (self.element.group+"-"+self.element.student.split(" ")[0]).replace(" ", "_")
+		return default
+
 class StudentsReader(Entries.EntriesReader):
 	'''
 	StudentsReader - class with reading information about students in specific format
@@ -33,3 +50,6 @@ class StudentsReader(Entries.EntriesReader):
 				structs.append(Functional.Struct(student=line, group=lines[0]))
 
 		return structs
+
+	def get_group_name(self, default: str = None) -> str:
+		return self.readlines()[0]
