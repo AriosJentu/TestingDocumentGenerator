@@ -1,3 +1,30 @@
+class KeyNumbers:
+	'''
+	KeyNumbers - class which contains information about key and numbers for parser
+	'''
+
+	def __init__(self, key: str, numbers: list[int]):
+		self.key = key
+		self.numbers = numbers
+
+	#Getters
+	def get_key(self):
+		return self.key
+
+	def get_numbers(self):
+		return self.numbers
+
+	#Other methods
+	def __iter__(self):
+		for number in self.numbers:
+			yield number
+
+	def __str__(self):
+		return f"KeyNumbers(key: {self.key}, numbers: {self.numbers})"
+
+	def __repr__(self):
+		return self.__str__()
+
 class Parser:
 	'''
 	Parser - static class with function to parse string of assignment arguments format.
@@ -27,13 +54,14 @@ class Parser:
 		return values
 
 	@staticmethod
-	def parse_assignments_argument(string) -> (str, list[int]):
+	def parse_assignments_argument(string: str) -> list[KeyNumbers]:
 		'''
 		Function to parse input string to find specific assignment documents with pattern.
 		Pattern would prefer next form:
-		"{assignment_key}{assignment_number}"
+		"{assignment_key}{assignment_number};{repeat}"
 		- 'assignment_key' - single latin symbol which indicates specific series of the assignments (for example, suppose 't' indicate all test assignments)
 		- 'assignment_number' - number of the assignment from specific series. Can contain one number: "t1", numbers as 'list': "t1,2,4", or range: "t1-4".
+		- 'repeat' - repeated pattern with assignment_key and assignment_number. Repeats must be separated with ';' char
 		Because of different layouts it's not perfrectly possible to generate different documents at one
 		Input arguments:
 		- 'string': String which would satisfie presented pattern
@@ -45,15 +73,26 @@ class Parser:
 		#It's possible to make with regexp, I think, but I haven't any idea how to make it with regexp
 		#Using basic idea - first char is key, next are numbers, in format "1", "1,2,3" or "1-4", also possible to use "1,2-4"
 
-		key = string[0]
+		results = []
 		
-		#If next part of string is invalid, then return False
-		if not Parser.is_valid_string(string[1:]):
-			return False
+		if not string:
+			return results
 
-		#Otherwise represent them as list of ranges, which are separated with comma
-		ranges = string[1:].split(",")
-		numbers = [index for irange in ranges for index in Parser.range_to_list(irange) if index is not None]
+		arguments = string.split(";")
+		for argument in arguments:
 
-		#Return key and list of numbers
-		return key, numbers
+			key = argument[0]
+		
+			#If next part of string is invalid, then return False
+			if not Parser.is_valid_string(argument[1:]):
+				return False
+
+			#Otherwise represent them as list of ranges, which are separated with comma
+			ranges = argument[1:].split(",")
+			numbers = [index for irange in ranges for index in Parser.range_to_list(irange) if index is not None]
+
+			#Append in results array object of KeyNumbers class
+			results.append(KeyNumbers(key, numbers))
+
+		#Return list of KeyNumbers
+		return results
