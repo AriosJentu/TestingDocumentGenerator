@@ -268,7 +268,7 @@ class SpecificTasks(Tasks):
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.all_tasks) == 0:
-			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information'?")
+			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?")
 		
 		#If there is no possibility to generate task, refresh all tasks possibilities
 		if len(self.tasks) == 0:
@@ -285,6 +285,47 @@ class SpecificTasks(Tasks):
 
 		#Return task string
 		return task
+
+class MultiTasks(Tasks):
+	'''
+	MultiTasks - Class to work with tasks which containing a list of files of Basic Tasks. This kind of tasks choose one file of task from lists from tasks files randomly. 
+	Also tasks can contain parts of replacement via some scripts. Information about it also can be passed here with specific method. And tasks may appears only for some times.
+	Initial arguments:
+	- 'list_basic_tasks': List of basic tasks (as objects of BasicTasks class)
+	# Available attributes:
+	# - 'tasks': List of specific tasks informations
+	# - 'unused_tasks': Numbers of tasks in all_tasks list
+	'''
+
+	def __init__(self, list_basic_tasks: list[BasicTasks] = None):
+		if list_basic_tasks == None:
+			list_basic_tasks = []
+
+		super().__init__()
+		self.list_basic_tasks = list_basic_tasks
+
+	def append(self, basic_tasks: BasicTasks):
+		'''Special method for this class - it's possible to append basic tasks into this class of tasks'''
+		self.list_basic_tasks.append(basic_tasks)
+
+	def read_information(self):
+		self.tasks = list(range(len(self.list_basic_tasks)))
+		self.unused_tasks = list(range(len(self.list_basic_tasks)))
+		self.cache_list = []
+		
+		for basictasks in self.list_basic_tasks:
+			basictasks.read_information()
+
+	def generate_task(self) -> Task:
+		'''Function to choose random task from list of tasks. Must return object of Task class'''
+
+		#Throw exception if there is no tasks (by task count)
+		if len(self.list_basic_tasks) == 0:
+			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information' or append some BasicTasks into this class?")
+
+		tasks_index = self.generate_task_index()
+
+		return self.list_basic_tasks[tasks_index].generate_task()
 
 class TasksInformation:
 	'''
