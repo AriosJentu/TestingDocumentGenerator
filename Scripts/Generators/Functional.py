@@ -52,6 +52,10 @@ class StructList:
 		'''Function to append struct into this list'''
 		self.structlist.append(struct)
 
+	def join(self, structlist: 'StructList'):
+		'''Function to add another struct list into this (join two structs)'''
+		self.structlist += structlist.structlist
+
 	def __len__(self):
 		return len(self.structlist)
 

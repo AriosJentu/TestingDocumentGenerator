@@ -65,3 +65,34 @@ class EntriesReader(Entries):
 			lines[index] = line.replace("\n", "")
 
 		return lines
+
+class JoinedEntries(Entries):
+	'''
+	JoinedEntries - class which containing list of objects of class Entries, to generate them as one struct list.
+	Inintial arguments:
+	- 'list_entries': list of objects of class Entries
+	Don't need to overload method 'generate_information'
+	'''
+
+	def __init__(self, list_entries: list[Entries] = None):
+		if not list_entries:
+			list_entries = []
+
+		self.list_entries = list_entries
+
+	def append(self, entries: Entries):
+		'''Function to append entries into this list'''
+		self.list_entries.append(entries)
+
+	def generate_information(self) -> Functional.StructList:
+		infos = Functional.StructList()
+		
+		for entry in self.list_entries:
+			info = entry.generate_information()
+			infos.join(info)
+
+		return infos
+
+	def __iter__(self):
+		for entries in self.list_entries:
+			yield entries
