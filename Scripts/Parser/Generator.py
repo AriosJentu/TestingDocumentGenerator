@@ -1,5 +1,6 @@
 import Information.Documents.AssignmentsInformation as AssignmentsInformation
 from ..Generators import Functional
+from ..Generators import Entries
 from .. import EntryStudents
 
 from . import Parser
@@ -74,23 +75,31 @@ class GeneratorWithStudents(Generator):
 		#Read arguments
 		args = Functional.Functions.crop_list_size(self.arguments, 4)[1:]
 		keys = args[0]
-		entries = args[1]
+		entries_list = args[1].split(";")
 
-		#If entries are not filepath, and not decimal, then suppose that this is student name
-		if entries and not Functional.Path.isfile(entries) and not entries.isdecimal():
-			#If this is student name, suppose next argument will be group name
-			group = args[2] or "Group Name"
-			entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
+		entries_obj = Entries.JoinedEntries()
 
-		#If entries are decimals, generate integer of decimals
-		elif entries and entries.isdecimal():
-			entries = int(entries)
+		for entries in entries_list:
+			
+			#If entries are not filepath, and not decimal, then suppose that this is student name
+			if entries and not Functional.Path.isfile(entries) and not entries.isdecimal():
+				#If this is student name, suppose next argument will be group name
+				group = args[2] or "Group Name"
+				entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
+
+			#If entries are decimals, generate integer of decimals
+			elif entries and entries.isdecimal():
+				entries = int(entries)
+
+			#This time may append not 'entries' element into JoinedEntries, but in parser it will be parsed 
+			entries_obj.append(entries)
 
 		#Generate argument parser with keys, entries, and Students Entries classes
-		arguments_parser = Arguments.ArgumentsParser(keys, entries)
+		arguments_parser = Arguments.ArgumentsParser(keys, entries_obj)
 		arguments_parser.set_entries_class(EntryStudents.StudentsReader, EntryStudents.EmptyStudents, EntryStudents.StudentFromValues)
 		
-		#Set filename with group name
-		self.set_filename(arguments_parser.parse_entries().get_group_name())
+		#Set filename with group names of all available entries:
+		string = "_".join([entries.get_group_name() for entries in arguments_parser.parse_entries()])
+		self.set_filename(string)
 
 		return arguments_parser
