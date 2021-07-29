@@ -34,30 +34,44 @@ class ArgumentsParser:
 		'''Function to parse keys'''
 		return Parser.Parser.parse_assignments_argument(self.keys)
 
-	def parse_entries(self) -> Entries.Entries:
-		'''Function to parse entries'''
+	def parse_entries(self, entries=None) -> Entries.Entries:
+		'''Function to parse entries. Will be recursive if entries are list of joined, and argument needed to be in this situations'''
+	
+		#By default, if there is no arguments, set entries as entries element of this object
+		if not entries:
+			entries = self.entries
+
+		#If this is list of entries
+		if isinstance(entries, Entries.JoinedEntries):
+			joined_parsed = Entries.JoinedEntries()
+
+			#For all entries inside, parse them recurselivly
+			for entries_element in entries:
+				joined_parsed.append(self.parse_entries(entries_element))
+
+			#Return joined entries which are parsed
+			return joined_parsed
 
 		#If this path exists, return entries with reading file
-		if isinstance(self.entries, str) and Functional.Path.isfile(self.entries):
-			entries = self.entries_with_path(self.entries)
-			return entries
+		if isinstance(entries, str) and Functional.Path.isfile(entries):
+			return self.entries_with_path(entries)
 
 		#If type of entries is dictionary, then generate struct list from this dictionary
-		if isinstance(self.entries, dict):
-			entries = self.entries_from_values(self.entries)
-			return entries
+		if isinstance(entries, dict):
+			return self.entries_from_values(entries)
 
 		#If this is integer, return entries without filepath with count of entries
-		if isinstance(self.entries, int) or (isinstance(self.entries, str) and self.entries.isdecimal()):
-			entries = self.entries_no_path()
-			entries.ENTRIES_COUNT = int(self.entries)
-			return entries
+		if isinstance(entries, int) or (isinstance(entries, str) and entries.isdecimal()):
+			new_entries = self.entries_no_path()
+			new_entries.ENTRIES_COUNT = int(entries)
+			return new_entries
 			
 		#If type of entries is class Entries, then return itself
-		if isinstance(self.entries, Entries.Entries):
-			return self.entries
+		if isinstance(entries, Entries.Entries):
+			return entries
 
 		#If there is no pattern for this element, just return empty struct:
 		return self.entries_no_path()
+
 
 
