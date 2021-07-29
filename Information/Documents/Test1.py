@@ -11,7 +11,7 @@ excercise_format = "\t\t\\item {title}\n{tasks}"
 tasks_format = "\n\t\t\t{task}" 
 
 #Layout location variable
-layout_location = "Layouts/sample.tex"
+layout_location = "Information/Layouts/sample.tex"
 
 #Page style variable
 page_style = Imports.Documents.PageStyle(test_format, excercise_format, tasks_format)
