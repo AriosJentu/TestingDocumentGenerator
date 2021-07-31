@@ -288,8 +288,8 @@ class SpecificTasks(Tasks):
 
 class MultiTasks(Tasks):
 	'''
-	MultiTasks - Class to work with tasks which containing a list of files of Basic Tasks. This kind of tasks choose one file of task from lists from tasks files randomly. 
-	Also tasks can contain parts of replacement via some scripts. Information about it also can be passed here with specific method. And tasks may appears only for some times.
+	MultiTasks - Class to work with list of objects of class Tasks. 
+	Tasks can contain parts of replacement via some scripts. Information about it also can be passed here with specific method. And tasks may appears only for some times.
 	Initial arguments:
 	- 'list_tasks': List of tasks (as objects of Tasks class)
 	'''
@@ -310,8 +310,8 @@ class MultiTasks(Tasks):
 		self.unused_tasks = list(range(len(self.list_tasks)))
 		self.cache_list = []
 		
-		for basictasks in self.list_tasks:
-			basictasks.read_information()
+		for tasks in self.list_tasks:
+			tasks.read_information()
 
 	def generate_task(self) -> Task:
 		'''Function to choose random task from list of tasks. Must return object of Task class'''
