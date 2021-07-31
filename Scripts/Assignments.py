@@ -175,12 +175,12 @@ class AssignmentsList(Functional.StructList):
 				with open(path.get_full_path(), "w") as file:
 					file.write(document_string)
 
-	def generate_others(self, output_file: str = None, with_prefix: bool = True) -> [list[str]]:
-		'''Function to generate others'''
+	def generate_as_single(self, output_file: str = None, with_prefix: bool = True, prefix_name: str = "__other__") -> [list[str]]:
+		'''Function to generate signle assignments from prefix name'''
 
 		documents = []
-		for assignment in self.dict_assignments.get("__other__"):
-			#For all assignments in others, generate individual assignment
+		for assignment in self.dict_assignments.get(prefix_name):
+			#For all assignments in this prefix name, generate individual assignment document
 			document = assignment.generate(output_file, with_prefix)
 			documents.append(document)
 
@@ -189,8 +189,14 @@ class AssignmentsList(Functional.StructList):
 		else:
 			return []
 
-	def generate(self, output_file: str = None, with_prefix: bool = True) -> [list[str], None]:
-		'''Function to generate all possible files'''
+	def generate(self, output_file: str = None, with_prefix: bool = True, separated: bool = False) -> [list[str], None]:
+		'''
+		Function to generate all possible files
+		Arguments:
+		- 'output_file': string of the output file
+		- 'with_prefix': generate file with prefix in name (by default - True)
+		- 'separated': generate files with similar assignment types separately (by default - False: means merge all similar in one file)
+		'''
 
 		#First of all - sort all files to layouts
 		self.order_by_layout()
@@ -198,13 +204,13 @@ class AssignmentsList(Functional.StructList):
 		documents = []
 		#For all prefix in assignments
 		for prefix in self.dict_assignments.keys():
-			if prefix != "__other__":
-				#If prefix is not in others - generate document by prefix
+			if prefix != "__other__" and not separated:
+				#If prefix is not in others, and files without separating - generate document by prefix
 				document = self.generate_by_prefix(prefix, output_file, with_prefix)
 				documents.append(document)
 			else:
-				#Otherwise generate others, and just add list of documents into documents list
-				documents_ = self.generate_others(output_file, with_prefix)
+				#Otherwise generate others (or, if separated, generate them separately), and just add list of documents into documents list
+				documents_ = self.generate_as_single(output_file, with_prefix, prefix)
 				documents += documents_
 
 		if not output_file:

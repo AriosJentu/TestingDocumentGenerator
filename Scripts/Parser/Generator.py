@@ -14,6 +14,9 @@ class Generator:
 	- 'arguments': list of arguments
 	- 'kwarguments': dictionary with keyword arguments
 	- 'assignments_list': list of assignments which will be generated with function 'generate', 
+	- 'filename': string of basic filename (without extension)
+	- 'fileextension': string of extension of the filename (by default - '.tex')
+	- 'separated': boolean value which indicates separation of the simial type assignments (be default - False)
 	Need to override function 'parse_arguments' when use this class as parent, by default function doesn't do nothing. This function must return object of ArgumentsParser class
 	'''
 
@@ -24,6 +27,7 @@ class Generator:
 		self.assignments_list = Assignments.AssignmentsList()
 		self.filename = ""
 		self.fileextension = ".tex"
+		self.separated = False
 
 	def set_filename(self, filename):
 		self.filename = filename
@@ -63,7 +67,7 @@ class Generator:
 
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
-		return self.assignments_list.generate(self.filename+self.fileextension, with_prefix)
+		return self.assignments_list.generate(self.filename+self.fileextension, with_prefix, self.separated)
 
 class GeneratorWithStudents(Generator):
 	'''
