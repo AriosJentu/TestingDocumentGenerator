@@ -294,7 +294,7 @@ class MultiTasks(Tasks):
 	- 'list_tasks': List of tasks (as objects of Tasks class)
 	'''
 
-	def __init__(self, list_basic_tasks: list[Tasks] = None):
+	def __init__(self, list_tasks: list[Tasks] = None):
 		if list_tasks == None:
 			list_tasks = []
 
