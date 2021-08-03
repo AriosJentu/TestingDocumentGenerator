@@ -1,7 +1,8 @@
 from .Generators import Tests
 from .Generators import Entries
 from .Generators import Documents
-from .Generators import Functional
+
+from . import Functions
 
 class Assignment:
 	'''
@@ -23,7 +24,7 @@ class Assignment:
 	layout: Documents.DocumentLayout
 	test: Tests.Test
 	entries: Entries.Entries
-	document_entry: Functional.Struct = Functional.Struct()
+	document_entry: Functions.Struct = Functions.Struct()
 	prefix: str = "prefix"
 	number: int = 0
 	generation_folder: str = "Generated/"
@@ -75,7 +76,7 @@ class Assignment:
 			#Otherwise generate document on path
 
 			#First of all - add generation folder to path
-			path = Functional.Path(output_file)
+			path = Functions.Path(output_file)
 			path.add_path(self.generation_folder)
 
 			if with_prefix:
@@ -85,7 +86,12 @@ class Assignment:
 			#Then generate document with this path
 			document.generate_document(path.get_full_path())
 
-class AssignmentsList(Functional.StructList):
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for all information about this assignment'''
+		self.test.add_prefix_path(prefix_path)
+		self.layout.add_prefix_path(prefix_path)
+
+class AssignmentsList(Functions.StructList):
 	'''
 	AssignmentsList - class which can generate more than one assignment in one document. Contains list of Assignments. 
 	Assume that this assignments has same document page style and same layout
@@ -164,7 +170,7 @@ class AssignmentsList(Functional.StructList):
 				#Otherwise generate document on path
 
 				#First of all - add generation folder to path
-				path = Functional.Path(output_file)
+				path = Functions.Path(output_file)
 				path.add_path(generation_folder)
 
 				if with_prefix:
@@ -215,6 +221,11 @@ class AssignmentsList(Functional.StructList):
 
 		if not output_file:
 			return documents
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for all assignments in this list'''
+		for assignment in self.structlist:
+			assignment.add_prefix_path(prefix_path)
 
 class AssignmentsInformationClass:
 	'''
