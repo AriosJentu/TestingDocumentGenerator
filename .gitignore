@@ -11,4 +11,5 @@
 *.fdb_latexmk
 *__pycache__*
 Generated/*
+Modules/*
 *sublime*
