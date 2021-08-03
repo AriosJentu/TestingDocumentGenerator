@@ -1,7 +1,4 @@
-from . import Functional
-
-class TasksException(Exception):
-	pass
+from .. import Functions
 
 class Task:
 	'''
@@ -26,7 +23,7 @@ class Task:
 
 	def remove_new_lines(self):
 		'''Function to remove new lines on the task'''
-		self.string = Functional.Functions.remove_new_lines(self.string)
+		self.string = Functions.Functions.remove_new_lines(self.string)
 
 	def task_from_update_function(self, update_function):
 		'''Function to generate new Task from current with updating it with function in terms of string. Function must contain argument of string, and must return string. This function returns a new copy of the task'''
@@ -87,7 +84,7 @@ class TasksGetter:
 
 	def __get_unused_random_index__(self) -> int:
 		'''Function to get random index from unused tasks, and this index isn't appeared in cache'''
-		return Functional.Functions.get_unused_index(self.unused_tasks, self.cache_list)
+		return Functions.Functions.get_unused_index(self.unused_tasks, self.cache_list)
 
 	def update_filepath(self, filepath):
 		'''Function to set new filepath of the tasks, with removing all infomration about tasks'''
@@ -103,9 +100,9 @@ class TasksGetter:
 		
 		with open(self.filepath) as file:
 			self.tasks = [
-				Functional.Functions.remove_new_lines(i) 
+				Functions.Functions.remove_new_lines(i) 
 				for i in file.readlines() 
-				if not Functional.Functions.is_empty_string(i)
+				if not Functions.Functions.is_empty_string(i)
 			]
 			self.unused_tasks = list(range(len(self.tasks)))
 			self.cache_list = []
@@ -115,7 +112,7 @@ class TasksGetter:
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.tasks) == 0:
-			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information'?")
+			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information'?")
 
 		#If there is already no unused tasks, regenerate them
 		if len(self.unused_tasks) == 0:
@@ -132,12 +129,21 @@ class TasksGetter:
 		task_index = self.generate_task_index()
 		return self.tasks[task_index]
 
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for the tasks of this type'''
+		self.filepath = Functions.Path.join(prefix_path, self.filepath)
+		self.update_filepath(self.filepath)
+
 class Tasks(TasksGetter):
 	'''
 	Tasks - parent class to define all possible types of tasks, with all methods which must be presented in task generator. Based on class TasksGetter
 	By default there is no initial arguments
 	Available attributes:
 	- 'updater': Function for updating task string on generation step. Must return string with updated task info, if replace (with method 'set_updater_function')
+	Any child class must contain next list of overloaded methods (if default methods is not possible to use in format of the task):
+	- 'read_information': for read tasks information (doesn't need to return anything)
+	- 'generate_task': for generating task (must return object of class Task)
+	- 'add_prefix_path': for appending prefix path of the module
 	'''
 
 	def __init__(self):
@@ -225,6 +231,10 @@ class SpecificTaskInfo:
 		taskinfo = self.updater(taskinfo)
 		return Task(taskinfo)
 
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for the specific task information'''
+		self.filepath = Functions.Path.join(prefix_path, self.filepath)
+
 class SpecificTasks(Tasks):
 	'''
 	SpecificTasks - Class to work with specific tasks with choosing them from list of files. This kind of tasks choose one file of task from list of them. Files containing title and specific task inside. 
@@ -268,7 +278,7 @@ class SpecificTasks(Tasks):
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.all_tasks) == 0:
-			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?")
+			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?")
 		
 		#If there is no possibility to generate task, refresh all tasks possibilities
 		if len(self.tasks) == 0:
@@ -285,6 +295,11 @@ class SpecificTasks(Tasks):
 
 		#Return task string
 		return task
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for the specific tasks'''
+		for task in self.all_tasks:
+			task.add_prefix_path(prefix_path)
 
 class MultiTasks(Tasks):
 	'''
@@ -318,11 +333,16 @@ class MultiTasks(Tasks):
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.list_tasks) == 0:
-			raise TasksException("There is no tasks. Maybe you need to generate them with 'read_information' or append some Tasks into this class?")
+			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information' or append some Tasks into this class?")
 
 		tasks_index = self.generate_task_index()
 
 		return self.list_tasks[tasks_index].generate_task()
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for this kind of tasks (multi tasks)'''
+		for task in self.list_tasks:
+			task.add_prefix_path(prefix_path)
 
 class TasksInformation:
 	'''
@@ -348,6 +368,10 @@ class TasksInformation:
 			tasks.append(self.tasks.generate_task())
 
 		return tasks
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for tasks in this tasks information'''
+		self.tasks.add_prefix_path(prefix_path)
 
 	def __str__(self):
 		return f"TasksInformation:\nR - {self.repeating}: {self.tasks}"

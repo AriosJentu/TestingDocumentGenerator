@@ -101,3 +101,8 @@ class Excercise:
 			generated.shuffle_tasks()
 
 		return generated
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for tasks in this excercise'''
+		for tasksinfo in self.tasks_info_list:
+			tasksinfo.add_prefix_path(prefix_path)

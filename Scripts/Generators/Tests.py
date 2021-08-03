@@ -47,3 +47,8 @@ class Test:
 			excercises.append(generated_excercise)
 
 		return GeneratedTest(excercises)
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for excercises in this test'''
+		for excercise in self.excercises:
+			excercise.add_prefix_path(prefix_path)
