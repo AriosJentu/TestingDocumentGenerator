@@ -1,5 +1,9 @@
 import random
+import os
 import os.path
+
+class TestingException(Exception):
+	pass
 
 class Struct:
 	'''
@@ -100,22 +104,42 @@ class Path:
 	'''
 	Path - class to work with path
 	'''
-	def __init__(self, output_file):
+	def __init__(self, output_file: str):
 		self.output_file = output_file
 
 	def get_full_path(self):
 		return self.output_file
 
-	def add_path(self, path):
+	def add_path(self, path: str):
 		'''Function to append some folders befor current output file'''
 		self.output_file = os.path.join(path, self.output_file)
 	
-	def add_file_prefix(self, prefix):
+	def add_file_prefix(self, prefix: str):
 		'''Function to add prefix to file'''
 		head, tail = os.path.split(self.output_file)
 		tail = prefix + tail
 		self.output_file = os.path.join(head, tail)
 
 	@staticmethod
-	def isfile(string):
-		return os.path.isfile(string)
+	def isfile(path: str):
+		return os.path.isfile(path)
+
+	@staticmethod
+	def isdir(path: str):
+		return os.path.isdir(path)
+
+	@staticmethod
+	def listdir(path: str):
+		return os.listdir(path)
+
+	@staticmethod
+	def list_dirs(path: str):
+		return [directory for directory in os.listdir(path) if os.path.isdir(os.path.join(path, directory))]
+
+	@staticmethod
+	def join(*paths: list[str]):
+		return os.path.join(*paths)
+
+	@staticmethod
+	def replace_separator(path: str, replacement: str = "."):
+		return path.replace(os.sep, replacement)
