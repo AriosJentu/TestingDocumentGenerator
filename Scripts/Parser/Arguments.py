@@ -1,6 +1,7 @@
-from ..Generators import Functional
 from ..Generators import Entries
+
 from . import Parser
+from .. import Functions
 
 class ArgumentsParser:
 	'''
@@ -53,7 +54,7 @@ class ArgumentsParser:
 			return joined_parsed
 
 		#If this path exists, return entries with reading file
-		if isinstance(entries, str) and Functional.Path.isfile(entries):
+		if isinstance(entries, str) and Functions.Path.isfile(entries):
 			return self.entries_with_path(entries)
 
 		#If type of entries is dictionary, then generate struct list from this dictionary

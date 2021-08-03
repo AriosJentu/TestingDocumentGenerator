@@ -1,17 +1,18 @@
 from .Generators import Entries
-from .Generators import Functional
+
+from . import Functions
 
 class EmptyStudents(Entries.Entries):
 	'''
 	EmptyStudents - class with generating struct with specific entries count based on class parameter. No need to open files
 	'''
 
-	def generate_information(self) -> Functional.StructList:
+	def generate_information(self) -> Functions.StructList:
 		'''Function to generate information with StudentsReader-like pattern'''
 
-		structs = Functional.StructList()
+		structs = Functions.StructList()
 		for index in range(self.ENTRIES_COUNT):
-			structs.append(Functional.Struct(student=f"A{index+1}", group="Sample group name"))
+			structs.append(Functions.Struct(student=f"A{index+1}", group="Sample group name"))
 
 		return structs
 
@@ -40,14 +41,14 @@ class StudentsReader(Entries.EntriesReader):
 	- 'filepath': Path of the students file
 	'''
 
-	def generate_information(self) -> Functional.StructList:
+	def generate_information(self) -> Functions.StructList:
 		'''Function to generate information. Pattern: fist line is 'group' string, all next lines are 'student' names'''
 		lines = self.readlines()
 
-		structs = Functional.StructList()
+		structs = Functions.StructList()
 		for line in lines[1:]:
-			if not Functional.Functions.is_empty_string(line):
-				structs.append(Functional.Struct(student=line, group=lines[0]))
+			if not Functions.Functions.is_empty_string(line):
+				structs.append(Functions.Struct(student=line, group=lines[0]))
 
 		return structs
 
