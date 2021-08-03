@@ -1,0 +1,14 @@
+*.pdf
+*.toc
+*.aux
+*.log
+*.synctex.gz
+*.xdv
+*.snm
+*.out
+*.nav
+*.fls
+*.fdb_latexmk
+*__pycache__*
+Generated/*
+*sublime*

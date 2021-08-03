@@ -1,0 +1,276 @@
+\documentclass[12pt, fleqn, a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{lipsum}
+
+\newcommand{\preamble}{\lipsum[1]}
+
+\newcommand{\generatepage}[4]{
+	%1 - Control event name
+	%2 - Student name
+	%3 - Student group
+	%4 - Content
+	\begin{center}
+		{\Large #1}
+
+		\textbf{Student:} #2
+
+		\textbf{Group:} #3
+
+	\end{center}
+
+	\vspace{10pt}
+
+	\preamble
+
+	\begin{enumerate}
+		#4
+	\end{enumerate}
+
+	\pagebreak
+}
+
+\begin{document}
+	
+	\generatepage{Homework \#1}{Arios Jentu}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 15
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			ut labore et dolore magna aliqua 
+
+			Even if I said,
+
+			sed do eiusmod tempor incididunt 
+		\item 
+
+			Task 4
+	}
+
+	\generatepage{Homework \#1}{Another Student}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 7
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			Still I hear you said
+
+			consectetur adipiscing elit
+
+			ullamco laboris nisi ut 
+		\item 
+
+			Updated Task 5
+	}
+
+	\generatepage{Homework \#1}{Plus one Student}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 11
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			This world will never be
+
+			aliquip ex ea commodo consequat
+
+			Lorem ipsum dolor sit amet
+		\item 
+
+			Task 7
+	}
+
+	\generatepage{Homework \#1}{Someone else}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 13
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			quis nostrud exercitation 
+
+			Ut enim ad minim veniam
+
+			It'll be all right
+		\item 
+
+			Task 3
+	}
+
+	\generatepage{Homework \#1}{Maybe this too}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 3
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			To just stay alive
+
+			ullamco laboris nisi ut 
+
+			ut labore et dolore magna aliqua 
+		\item 
+
+			Task 6
+	}
+
+	\generatepage{Homework \#1}{Albert Einstein}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 10
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			Lorem ipsum dolor sit amet
+
+			quis nostrud exercitation 
+
+			It's never too late
+		\item 
+
+			Task 1
+	}
+
+	\generatepage{Homework \#1}{Is anybody else?}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 1
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			And if I don't belong...
+
+			Ut enim ad minim veniam
+
+			aliquip ex ea commodo consequat
+		\item 
+
+			Task 2
+	}
+
+	\generatepage{Homework \#1}{Maybe student number eight}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 6
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			What I've expected
+
+			sed do eiusmod tempor incididunt 
+
+			consectetur adipiscing elit
+		\item 
+
+			Updated Task 5
+	}
+
+	\generatepage{Homework \#1}{I'll have two number nines}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Hello World Number 14
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			Maybe will turn it all around cause it's
+
+			quis nostrud exercitation 
+
+			aliquip ex ea commodo consequat
+		\item 
+
+			Task 7
+	}
+
+	\generatepage{Homework \#1}{{\large A number nine}}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 12
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			Not too late
+
+			Lorem ipsum dolor sit amet
+
+			ut labore et dolore magna aliqua 
+		\item 
+
+			Task 6
+	}
+
+	\generatepage{Homework \#1}{A number six with extra dip}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 9
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			sed do eiusmod tempor incididunt 
+
+			Ut enim ad minim veniam
+
+			Now and again we tried
+		\item 
+
+			Task 4
+	}
+
+	\generatepage{Homework \#1}{A number seven}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 5
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			ullamco laboris nisi ut 
+
+			consectetur adipiscing elit
+
+			You want to end your life
+		\item 
+
+			Task 1
+	}
+
+	\generatepage{Homework \#1}{Two number forty fives}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 2
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			ut labore et dolore magna aliqua 
+
+			Lorem ipsum dolor sit amet
+
+			It's never too late
+		\item 
+
+			Task 2
+	}
+
+	\generatepage{Homework \#1}{One with cheese}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Number 8
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			sed do eiusmod tempor incididunt 
+
+			It'll be all right
+
+			aliquip ex ea commodo consequat
+		\item 
+
+			Task 3
+	}
+
+	\generatepage{Homework \#1}{And a {\LARGE soda}}{M0744-228.13.37-latex}{
+		\item Excercise 1 -- Single task
+
+			Hello World Number 4
+		\item Excercise 2 -- two tasks with repeating (3 tasks in summary)
+
+			This world will never be
+
+			Ut enim ad minim veniam
+
+			quis nostrud exercitation 
+		\item 
+
+			Updated Task 5
+	}
+
+
+\end{document}
