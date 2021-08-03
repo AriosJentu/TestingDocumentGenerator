@@ -1,11 +1,12 @@
-import Information.Documents.AssignmentsInformation as AssignmentsInformation
-from ..Generators import Functional
 from ..Generators import Entries
-from .. import EntryStudents
 
 from . import Parser
+from . import Modules
 from . import Arguments
+
+from .. import EntryStudents
 from .. import Assignments
+from .. import Functions
 
 class Generator:
 	'''
@@ -39,8 +40,11 @@ class Generator:
 		'''Function to parse available arguments. Must be overloaded'''
 		pass
 
-	def read_assignments_list(self):
-		'''Function to generate object of class AssignmentsList from arguments parser for this class'''
+	def read_assignments_list(self, info_module: Modules.Module):
+		'''Function to generate object of class AssignmentsList from arguments parser for this class. 'info_module' must be a object of Module class with AssignmentsInformation object, which is an object of 'AssignmentsInformationClass' class'''
+
+		if not isinstance(info_module, Modules.Module):
+			return Functions.TestingException("There is no module")
 
 		argsparser = self.parse_arguments()
 
@@ -55,15 +59,16 @@ class Generator:
 			for number in keynumbers:
 
 				#If this class exists
-				if assignment_class := AssignmentsInformation.AssignmentsInformation.get(keynumbers.key, number):
+				if assignment_class := info_module.module.AssignmentsInformation.get(keynumbers.key, number):
 
 					#Generate object of this class, set it's entries, and append to assignments list
 					assignment = assignment_class()
 					assignment.set_entries(entries)
 					assignments.append(assignment)
 
-		#Then generate object of class AssignmentsList from this assignments
+		#Then generate object of class AssignmentsList from this assignments, and add module prefix for this
 		self.assignments_list = Assignments.AssignmentsList(assignments)
+		self.assignments_list.add_prefix_path(info_module.path)
 
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
@@ -77,18 +82,18 @@ class GeneratorWithStudents(Generator):
 		'''Function to parse arguments with students classes'''
 
 		#Read arguments
-		args = Functional.Functions.crop_list_size(self.arguments, 4)[1:]
-		keys = args[0]
-		entries_list = args[1].split(";")
+		args = Functions.Functions.crop_list_size(self.arguments, 5)[1:]
+		keys = args[1]
+		entries_list = args[2].split(";")
 
 		entries_obj = Entries.JoinedEntries()
 
 		for entries in entries_list:
 			
 			#If entries are not filepath, and not decimal, then suppose that this is student name
-			if entries and not Functional.Path.isfile(entries) and not entries.isdecimal():
+			if entries and not Functions.Path.isfile(entries) and not entries.isdecimal():
 				#If this is student name, suppose next argument will be group name
-				group = args[2] or "Group Name"
+				group = args[3] or "Group Name"
 				entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
 
 			#If entries are decimals, generate integer of decimals
