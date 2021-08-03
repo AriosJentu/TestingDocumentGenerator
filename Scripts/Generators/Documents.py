@@ -1,7 +1,7 @@
 from . import Tests
-from . import Functional
+from .. import Functions
 
-class PageValues(Functional.Struct):
+class PageValues(Functions.Struct):
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
 	Initial arguments:
@@ -23,7 +23,7 @@ class PageValues(Functional.Struct):
 		'''Function to generate test option from this format'''
 		return self.__test_option__.generate_test()
 
-class PagesInformation(Functional.StructList):
+class PagesInformation(Functions.StructList):
 	'''
 	PagesInformation - class which containing information about all available pages
 	Initial arguments:
@@ -130,6 +130,10 @@ class DocumentLayout:
 		'''Function to generate document with content from layout'''
 		layout = self.read_layout()
 		return layout.replace(self.contentstr, content)
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for layouts'''
+		self.layout = Functions.Path.join(prefix_path, self.layout)
 
 class Document:
 	'''

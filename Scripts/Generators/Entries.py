@@ -1,4 +1,4 @@
-from . import Functional
+from .. import Functions
 
 class Entries:
 	'''
@@ -14,7 +14,7 @@ class Entries:
 	def __init__(self):
 		pass
 
-	def generate_information(self) -> Functional.StructList:
+	def generate_information(self) -> Functions.StructList:
 		'''Empty function to override. Need to work with entries count information, and generate List of Structs (StructList object). Then this element will be used in generating variant with data presented in this StructList.'''
 		pass
 
@@ -27,14 +27,14 @@ class EntryFromValues(Entries):
 	Don't need to overload method 'generate_information'
 	'''
 
-	def __init__(self, element: (dict, Functional.Struct)):
+	def __init__(self, element: (dict, Functions.Struct)):
 		if isinstance(element, dict):
-			element = Functional.Struct(**element)
+			element = Functions.Struct(**element)
 		
 		self.element = element
 
-	def generate_information(self) -> Functional.StructList:
-		return Functional.StructList([self.element])
+	def generate_information(self) -> Functions.StructList:
+		return Functions.StructList([self.element])
 
 class EntriesReader(Entries):
 	'''
@@ -84,8 +84,8 @@ class JoinedEntries(Entries):
 		'''Function to append entries into this list'''
 		self.list_entries.append(entries)
 
-	def generate_information(self) -> Functional.StructList:
-		infos = Functional.StructList()
+	def generate_information(self) -> Functions.StructList:
+		infos = Functions.StructList()
 		
 		for entry in self.list_entries:
 			info = entry.generate_information()
