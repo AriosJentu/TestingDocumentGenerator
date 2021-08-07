@@ -18,6 +18,7 @@ class Generator:
 	- 'filename': string of basic filename (without extension)
 	- 'fileextension': string of extension of the filename (by default - '.tex')
 	- 'separated': boolean value which indicates separation of the simial type assignments (be default - False)
+	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 	Need to override function 'parse_arguments' when use this class as parent, by default function doesn't do nothing. This function must return object of ArgumentsParser class
 	'''
 
@@ -29,12 +30,21 @@ class Generator:
 		self.filename = ""
 		self.fileextension = ".tex"
 		self.separated = False
+		self.is_all_tasks = False
 
 	def set_filename(self, filename):
 		self.filename = filename
 
 	def set_fileextension(self, fileextension):
 		self.fileextension = fileextension
+
+	def set_all_tasks_generation(self, is_all_tasks: bool = False):
+		'''Function to set variable of generating all tasks'''
+		self.is_all_tasks = is_all_tasks
+
+	def set_separated(self, separated: bool = False):
+		'''Function to set separation of the documents'''
+		self.separated = separated
 
 	def parse_arguments(self) -> Arguments.ArgumentsParser:
 		'''Function to parse available arguments. Must be overloaded'''
@@ -44,7 +54,7 @@ class Generator:
 		'''Function to generate object of class AssignmentsList from arguments parser for this class. 'info_module' must be a object of Module class with AssignmentsInformation object, which is an object of 'AssignmentsInformationClass' class'''
 
 		if not isinstance(info_module, Modules.Module):
-			return Functions.TestingException("There is no module")
+			return Functions.TestingException(Functions.TestingException.NoModule)
 
 		argsparser = self.parse_arguments()
 
@@ -72,7 +82,7 @@ class Generator:
 
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
-		return self.assignments_list.generate(self.filename+self.fileextension, with_prefix, self.separated)
+		return self.assignments_list.generate(self.filename+self.fileextension, with_prefix, self.separated, self.is_all_tasks)
 
 class GeneratorWithStudents(Generator):
 	'''
@@ -82,26 +92,46 @@ class GeneratorWithStudents(Generator):
 		'''Function to parse arguments with students classes'''
 
 		#Read arguments
-		args = Functions.Functions.crop_list_size(self.arguments, 5)[1:]
+		args = Functions.Functions.crop_list_size(self.arguments, 8)[1:]
+
+		#Parse arguments for separated
+		if "-s" in args:
+			self.set_separated(True)
+			args.pop(args.index("-s"))
+		#Parse arguments for all tasks
+		if "-a" in args:
+			self.set_all_tasks_generation(True)
+			args.pop(args.index("-a"))
+
+		#Keys must be 1st argument, after script name, entries must be 2nd argument
 		keys = args[1]
-		entries_list = args[2].split(";")
+		
+		#If it's all tasks, doesn't matter which entries to generate
+		if self.is_all_tasks:
+			entries_obj = Entries.JoinedEntries()
+			entries_obj.append(EntryStudents.StudentFromValues({"student": "Sample element", "group": "Sample group"}))
 
-		entries_obj = Entries.JoinedEntries()
+		#If it's not all tasks
+		else:
+			entries_list = args[2].split(";")
 
-		for entries in entries_list:
-			
-			#If entries are not filepath, and not decimal, then suppose that this is student name
-			if entries and not Functions.Path.isfile(entries) and not entries.isdecimal():
-				#If this is student name, suppose next argument will be group name
-				group = args[3] or "Group Name"
-				entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
+			entries_obj = Entries.JoinedEntries()
 
-			#If entries are decimals, generate integer of decimals
-			elif entries and entries.isdecimal():
-				entries = int(entries)
+			for entries in entries_list:
+				
+				#If entries are not filepath, and not decimal, then suppose that this is student name
+				if entries and not Functions.Path.isfile(entries) and not entries.isdecimal():
+					#If this is student name, suppose next argument will be group name
+					group = args[3] or "Group Name"
+					entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
 
-			#This time may append not 'entries' element into JoinedEntries, but in parser it will be parsed 
-			entries_obj.append(entries)
+				#If entries are decimals, generate integer of decimals
+				elif entries and entries.isdecimal():
+					entries = int(entries)
+
+				#This time may append not 'entries' element into JoinedEntries, but in parser it will be parsed 
+				entries_obj.append(entries)
+
 
 		#Generate argument parser with keys, entries, and Students Entries classes
 		arguments_parser = Arguments.ArgumentsParser(keys, entries_obj)
