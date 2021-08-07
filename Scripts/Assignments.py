@@ -32,7 +32,7 @@ class Assignment:
 	def set_entries(self, entries: Entries.Entries):
 		self.entries = entries
 
-	def __read_test_tasks_informations__(self):
+	def __read_test_tasks_informations__(self, is_all_tasks: bool = False):
 		'''Function to read all tasks informations in test'''
 
 		#Set tests variable of all tasks:
@@ -81,7 +81,7 @@ class Assignment:
 		'''
 
 		#Read all information of tasks in test
-		self.__read_test_tasks_informations__()
+		self.__read_test_tasks_informations__(is_all_tasks)
 
 		#Generate information about pages with available entries
 		pages_information = self.__generate_pages_information__()
