@@ -1,6 +1,18 @@
 from . import Tests
 from .. import Functions
 
+class Page(str):
+	'''Define Page class as string class'''
+	pass
+
+class Layout(str):
+	'''Define Layout class as string class'''
+	pass
+
+class Content(str):
+	'''Define Content class as string class'''
+	pass
+
 class PageValues(Functions.Struct):
 	'''
 	PageArguments - class with Struct format, working with dictionaries.
@@ -55,7 +67,7 @@ class PageStyle:
 
 	def generate_page(self, 
 			format_arguments: PageValues, 
-	) -> str:
+	) -> Page:
 		'''
 		Function to generate page string from format arguments and excercises. Put all in format string and return it.
 		Arguments:
@@ -92,7 +104,7 @@ class PageStyle:
 		#Put this content inside
 		page_content = self.test_option_format.format(**format_arguments.dict(), excercises=page_excercises)
 
-		return page_content
+		return Page(page_content)
 
 class DocumentLayout:
 	'''
@@ -115,18 +127,18 @@ class DocumentLayout:
 		self.pagestyle = page_style
 		self.contentstr = content_string
 
-	def read_layout(self) -> str:
+	def read_layout(self) -> Layout:
 		'''Function to read document layout'''
 		layout = ""
 		with open(self.layout) as file:
 			layout = file.read()
 
-		return layout
+		return Layout(layout)
 
-	def generate_page(self, page_value) -> str:
-		return self.pagestyle.generate_page(page_value)
+	def generate_page(self, page_values: PageValues) -> Page:
+		return self.pagestyle.generate_page(page_values)
 
-	def get_document_string_wth_content(self, content: str) -> str:
+	def get_document_string_wth_content(self, content: Content) -> str:
 		'''Function to generate document with content from layout'''
 		layout = self.read_layout()
 		return layout.replace(self.contentstr, content)
@@ -152,7 +164,7 @@ class Document:
 		self.layout = layout
 		self.pagesinfo = pages_info
 
-	def generate_content(self) -> str:
+	def generate_content(self) -> Content:
 		'''Function to generate pages content for document from available info'''
 		
 		document_content_list = []
@@ -165,7 +177,7 @@ class Document:
 
 		#Then merge it
 		document_content = "\n".join(document_content_list)
-		return document_content
+		return Content(document_content)
 
 	def generate_document_string(self) -> str:
 		'''Function to generate document using available information'''
