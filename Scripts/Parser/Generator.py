@@ -74,6 +74,7 @@ class Generator:
 					#Generate object of this class, set it's entries, and append to assignments list
 					assignment = assignment_class()
 					assignment.set_entries(entries)
+					assignment.set_module(info_module)
 					assignments.append(assignment)
 
 		#Then generate object of class AssignmentsList from this assignments, and add module prefix for this
@@ -103,7 +104,7 @@ class GeneratorWithStudents(Generator):
 		if "-s" in args:
 			self.set_separated(True)
 			args.pop(args.index("-s"))
-			
+
 		#Parse arguments for all tasks
 		if "-a" in args:
 			self.set_all_tasks_generation(True)
