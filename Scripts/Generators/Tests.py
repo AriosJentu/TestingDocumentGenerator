@@ -56,7 +56,7 @@ class Test:
 		excercises = []
 		
 		for excercise in self.excercises:
-			generated_excercise = excercise.generate_tasks()
+			generated_excercise = excercise.generate_excercise()
 			excercises.append(generated_excercise)
 
 		return GeneratedTest(excercises)

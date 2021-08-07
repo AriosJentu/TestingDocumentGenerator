@@ -32,18 +32,8 @@ class Assignment:
 	def set_entries(self, entries: Entries.Entries):
 		self.entries = entries
 
-	def generate(self, output_file: str = None, with_prefix: bool = True, only_content: bool = False, is_all_tasks: bool = False) -> [str, None]:
-		'''
-		Function to generate Assignment document for various 'entries'. 
-		Arguments:
-		- 'output_file': output file name. Will be generated in special generation folder. If false, return two possibilities, which depends on only_content argument.
-		- 'with_prefix': information about generating file with prefix. By default it's true. Append in filename at the beginning information about assignment prefix and assignment number
-		- 'only_content':  works only if there is no output_file argument. Returns string of the content of the document, if true, otherwice return all document string (may be posted in file)
-		- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
-		'''
-
-		#First of all, generate entries elements
-		entries_elements = self.entries.generate_information()
+	def __read_test_tasks_informations__(self):
+		'''Function to read all tasks informations in test'''
 
 		#Set tests variable of all tasks:
 		self.test.set_all_tasks_generation(is_all_tasks)
@@ -52,6 +42,12 @@ class Assignment:
 		for excercise in self.test.get_excercises():
 			for tasks_information in excercise.get_tasks_information_list():
 				tasks_information.get_tasks().read_information()
+
+	def __generate_pages_information__(self) -> Documents.PagesInformation:
+		'''Function to generate page information with entries'''
+
+		#First of all, generate entries elements
+		entries_elements = self.entries.generate_information()
 
 		#When entries are ready, generate information about pages:
 		pages_information = Documents.PagesInformation()
@@ -66,6 +62,29 @@ class Assignment:
 			)
 			#Append this page value into pages information
 			pages_information.append(page_values) 
+
+		return pages_information
+
+	def generate(self, 
+			output_file: str = None, 
+			with_prefix: bool = True, 
+			only_content: bool = False, 
+			is_all_tasks: bool = False
+	) -> [str, None]:
+		'''
+		Function to generate Assignment document for various 'entries'. 
+		Arguments:
+		- 'output_file': output file name. Will be generated in special generation folder. If false, return two possibilities, which depends on only_content argument.
+		- 'with_prefix': information about generating file with prefix. By default it's true. Append in filename at the beginning information about assignment prefix and assignment number
+		- 'only_content':  works only if there is no output_file argument. Returns string of the content of the document, if true, otherwice return all document string (may be posted in file)
+		- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
+		'''
+
+		#Read all information of tasks in test
+		self.__read_test_tasks_informations__()
+
+		#Generate information about pages with available entries
+		pages_information = self.__generate_pages_information__()
 
 		#Then generate Document object with containing pages information
 		document = Documents.Document(self.layout, pages_information)
@@ -145,7 +164,12 @@ class AssignmentsList(Functions.StructList):
 			prefix = self.get_prefix_to_append(assignment)
 			self.dict_assignments[prefix].append(assignment)
 
-	def generate_by_prefix(self, prefix: str, output_file: str = None, with_prefix: bool = True, is_all_tasks: bool = False) -> [str, None]:
+	def generate_by_prefix(self, 
+			prefix: str, 
+			output_file: str = None, 
+			with_prefix: bool = True, 
+			is_all_tasks: bool = False
+	) -> [str, None]:
 		'''Function to generate all available assignments from list'''
 
 		#If this is "other" prefix, return nothing, because it has another generator

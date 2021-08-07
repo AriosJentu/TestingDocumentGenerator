@@ -11,8 +11,11 @@ class ArgumentsParser:
 	- 'entries': string/int/dictionary/Entries argument. If string, it may be a filepath of the entries, or one of the entry name (for example, student, if filepath not found). If int, it may be count of generated specifically entries, with case 'no file'. 
 	'''
 
-	def __init__(self, keys: str, entries: (str, int, dict, Entries.Entries), *args, **kwargs):
-
+	def __init__(self, 
+			keys: str, 
+			entries: (str, int, dict, Entries.Entries), 
+			*args, **kwargs
+	):
 		#If entries not intance of presented classes, then just make it empty, then it will generate entries without path
 		if not isinstance(entries, (str, int, dict, Entries.Entries)):
 			entries = None
@@ -25,7 +28,11 @@ class ArgumentsParser:
 		self.entries_no_path = Entries.Entries
 		self.entries_from_values = Entries.EntryFromValues
 
-	def set_entries_class(self, with_path = Entries.EntriesReader, no_path = Entries.Entries, from_values = Entries.EntryFromValues):
+	def set_entries_class(self, 
+			with_path = Entries.EntriesReader, 
+			no_path = Entries.Entries, 
+			from_values = Entries.EntryFromValues
+	):
 		'''Function to update entries class - with_path, no_path and from_values'''
 		self.entries_with_path = with_path
 		self.entries_no_path = no_path

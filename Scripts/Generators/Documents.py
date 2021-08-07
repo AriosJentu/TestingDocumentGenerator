@@ -123,7 +123,7 @@ class DocumentLayout:
 
 		return layout
 
-	def generate_page(self, page_value):
+	def generate_page(self, page_value) -> str:
 		return self.pagestyle.generate_page(page_value)
 
 	def get_document_string_wth_content(self, content: str) -> str:

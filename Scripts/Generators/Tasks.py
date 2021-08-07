@@ -53,7 +53,7 @@ class TasksGetter:
 	Available arguments:
 	- 'tasks' - list of strings of tasks
 	- 'cache_list' - list of integers - numbers of the tasks in 'tasks' list which already used
-	- 'unused_tasks' - list of integers of the tasks which are unused at the moment 
+	- 'unused_tasks' - list of numbers of the tasks which are unused at the moment 
 	'''
 
 	CACHE_SIZE = 5
@@ -100,9 +100,9 @@ class TasksGetter:
 		
 		with open(self.filepath) as file:
 			self.tasks = [
-				Functions.Functions.remove_new_lines(i) 
-				for i in file.readlines() 
-				if not Functions.Functions.is_empty_string(i)
+				Functions.Functions.remove_new_lines(line) 
+				for line in file.readlines() 
+				if not Functions.Functions.is_empty_string(line)
 			]
 			self.unused_tasks = list(range(len(self.tasks)))
 			self.cache_list = []
@@ -219,15 +219,15 @@ class SpecificTaskInfo:
 	- 'appear_count': count of possible appearings this task in all tasks in generation. -1 means it can appear every cycle. By default it's -1
 	Available attributes:
 	- 'filepath': Path of the task file
-	- 'available_appear_count': count of possible appearings this task in all tasks in generation. -1 means it can appear every cycle. By default it's -1
-	- 'fixed_appear_count': same as 'appear_count', but fixed for regeneration
+	- 'available_appear_count': count of possible appearings this task in all tasks in generation. Every calling new task of this type reduces this variable by 1, if it's positive.
+	- 'max_appear_count': same as 'appear_count', but fixed for regeneration (maximal appears)
 	- 'updater': Function for updating task string on generation step. Must return string with updated task info, if replace (with method 'set_updater_function')
 	'''
 
 	def __init__(self, file_path: str, appear_count: int = -1):
 		self.filepath = file_path
 		self.available_appear_count = appear_count
-		self.fixed_appear_count = appear_count
+		self.max_appear_count = appear_count
 
 		#Update task information function
 		self.updater = lambda taskstring: taskstring
@@ -246,11 +246,12 @@ class SpecificTaskInfo:
 
 	def regenerate_possibility(self):
 		'''Function to recover possibility to generate this kind of tasks'''
-		self.available_appear_count = self.fixed_appear_count
+		self.available_appear_count = self.max_appear_count
 
 	def get_task(self) -> Task:
 		'''Function to get task from this filepath. Must return object of Task class'''
 
+		#But if there is no possibility to generate this task - return nothing
 		if self.available_appear_count == 0:
 			return None
 
@@ -258,11 +259,13 @@ class SpecificTaskInfo:
 		with open(self.filepath) as file:
 			taskinfo = file.read()
 
-		#Decrease appearing count, if it's not infinitely many possibilities
+		#Decrease appearing count, if it's haven't infinitely many possibilities of generation
 		if self.available_appear_count > 0:
 			self.available_appear_count -= 1
 
+		#Update task information with updater
 		taskinfo = self.updater(taskinfo)
+
 		return Task(taskinfo)
 
 	def add_prefix_path(self, prefix_path: str):
@@ -276,8 +279,10 @@ class SpecificTasks(Tasks):
 	Initial arguments:
 	- 'list_tasks': List of specific tasks informations (as objects of SpecificTaskInfo class)
 	Available attributes:
-	- 'tasks': List of specific tasks informations
+	- 'all_tasks': List of specific tasks informations
+	- 'tasks': List of indicies of all_tasks which possible to generate (can't be renamed as 'tasks_indicies' because of regeneration of tasks this variable is used to detect tasks)
 	- 'unused_tasks': Numbers of tasks in all_tasks list
+	- 'cache_list' - list of integers - numbers of the tasks in 'tasks' list which already used
 	'''
 
 	def __init__(self, tasks_list: list[SpecificTaskInfo] = None):
@@ -356,6 +361,11 @@ class MultiTasks(Tasks):
 	Tasks can contain parts of replacement via some scripts. Information about it also can be passed here with specific method. And tasks may appears only for some times.
 	Initial arguments:
 	- 'list_tasks': List of tasks (as objects of Tasks class)
+	Available attributes:
+	- 'list_tasks': List of tasks (as objects of Tasks class)
+	- 'tasks': List of indicies of all_tasks which possible to generate (can't be renamed as 'tasks_indicies' because of regeneration of tasks this variable is used to detect tasks)
+	- 'unused_tasks': Numbers of tasks in all_tasks list
+	- 'cache_list' - list of integers - numbers of the tasks in 'tasks' list which already used
 	'''
 
 	def __init__(self, list_tasks: list[Tasks] = None):
@@ -392,7 +402,6 @@ class MultiTasks(Tasks):
 		'''Function to add prefix path for this kind of tasks (multi tasks)'''
 		for task in self.list_tasks:
 			task.add_prefix_path(prefix_path)
-
 
 	def get_all_tasks(self) -> list[Task]:
 		'''Function to get all tasks in it's appear order (using for debug all tasks in document)'''

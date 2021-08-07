@@ -82,7 +82,12 @@ class Generator:
 
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
-		return self.assignments_list.generate(self.filename+self.fileextension, with_prefix, self.separated, self.is_all_tasks)
+		return self.assignments_list.generate(
+			self.filename+self.fileextension, 
+			with_prefix, 
+			self.separated, 
+			self.is_all_tasks
+		)
 
 class GeneratorWithStudents(Generator):
 	'''
@@ -98,6 +103,7 @@ class GeneratorWithStudents(Generator):
 		if "-s" in args:
 			self.set_separated(True)
 			args.pop(args.index("-s"))
+			
 		#Parse arguments for all tasks
 		if "-a" in args:
 			self.set_all_tasks_generation(True)

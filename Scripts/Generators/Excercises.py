@@ -98,7 +98,7 @@ class Excercise:
 		'''Function to set excercises shuffled when generate'''
 		self.shuffle = shuffle
 
-	def generate_tasks(self) -> GeneratedExcercise:
+	def generate_excercise(self) -> GeneratedExcercise:
 		'''Function to generate list of tasks for this excercise. Also this function updating title of the excercise. Returns object of 'GeneratedExcercise' class'''
 
 		tasks = []
