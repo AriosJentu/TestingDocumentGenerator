@@ -49,6 +49,7 @@ class Excercise:
 	- 'tasks_info_list': List of the tasks information (list of objects of class 'TasksInformation')
 	- 'title': Title string of the excercise. Can be empty in case of specific tasks, for example
 	- 'shuffle': Shuffle generated tasks for this excercise
+	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 	Available attributes:
 	- 'tasks_info_list': List of the tasks information
 	- 'title': Title string of the excercise
@@ -57,7 +58,8 @@ class Excercise:
 	def __init__(self, 
 			tasks_info_list: list[Tasks.TasksInformation] = None, 
 			title: str = "",
-			shuffle: bool = False
+			shuffle: bool = False,
+			is_all_tasks: bool = False,
 	):
 		if not tasks_info_list:
 			tasks_info_list = []
@@ -65,13 +67,24 @@ class Excercise:
 		self.tasks_info_list = tasks_info_list
 		self.title = title
 		self.shuffle = shuffle
+		self.is_all_tasks = is_all_tasks
+		self.set_all_tasks_generation(self.is_all_tasks)
 
 		#Updating title string function
 		self.updater = lambda titlestring: titlestring
 
 	def append(self, tasks_info: Tasks.TasksInformation):
 		'''Function to append task information into excercise'''
+		tasks_info.set_all_tasks_generation(self.is_all_tasks)
 		self.tasks_info_list.append(tasks_info)
+
+	def set_all_tasks_generation(self, is_all_tasks: bool = False):
+		'''Function to set variable of generating all tasks'''
+		self.is_all_tasks = is_all_tasks
+
+		#Set all tasks generation for tasks information
+		for tasks_info in self.tasks_info_list:
+			tasks_info.set_all_tasks_generation(self.is_all_tasks)
 
 	def get_tasks_information_list(self):
 		'''Function to get tasks information list'''
@@ -97,7 +110,8 @@ class Excercise:
 		title = self.updater(self.title)
 
 		generated = GeneratedExcercise(tasks, title)
-		if self.shuffle:
+		#Shuffle tasks if it's available to shuffle, and tasks generating as excercise (not debug all tasks)
+		if self.shuffle and not self.is_all_tasks:
 			generated.shuffle_tasks()
 
 		return generated

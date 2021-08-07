@@ -24,14 +24,27 @@ class Test:
 	Test - class which combine all available excercises to the one test option
 	Available arguments:
 	- 'excercises': List of all excercises (objects of class 'Excercise')
+	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 	'''
 
-	def __init__(self, excercises: list[Excercises.Excercise] = []):
+	def __init__(self, excercises: list[Excercises.Excercise] = None, is_all_tasks: bool = False):
+		if not excercises:
+			excercises = []
+
 		self.excercises = excercises
+		self.is_all_tasks = is_all_tasks
+		self.set_all_tasks_generation(self.is_all_tasks)
 
 	def add(self, excercise: Excercises.Excercise):
 		'''Function to add excercise into this test'''
+		excercise.set_all_tasks_generation(self.is_all_tasks)
 		self.excercises.append(excercise)
+
+	def set_all_tasks_generation(self, is_all_tasks: bool = False):
+		'''Function to set variable of generating all tasks'''
+		self.is_all_tasks = is_all_tasks
+		for excercise in self.excercises:
+			excercise.set_all_tasks_generation(self.is_all_tasks)
 
 	def get_excercises(self):
 		'''Function to get all excercises formats for this test'''
