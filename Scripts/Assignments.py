@@ -32,17 +32,21 @@ class Assignment:
 	def set_entries(self, entries: Entries.Entries):
 		self.entries = entries
 
-	def generate(self, output_file: str = None, with_prefix: bool = True, only_content: bool = False) -> [str, None]:
+	def generate(self, output_file: str = None, with_prefix: bool = True, only_content: bool = False, is_all_tasks: bool = False) -> [str, None]:
 		'''
 		Function to generate Assignment document for various 'entries'. 
 		Arguments:
 		- 'output_file': output file name. Will be generated in special generation folder. If false, return two possibilities, which depends on only_content argument.
 		- 'with_prefix': information about generating file with prefix. By default it's true. Append in filename at the beginning information about assignment prefix and assignment number
 		- 'only_content':  works only if there is no output_file argument. Returns string of the content of the document, if true, otherwice return all document string (may be posted in file)
+		- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 		'''
 
 		#First of all, generate entries elements
 		entries_elements = self.entries.generate_information()
+
+		#Set tests variable of all tasks:
+		self.test.set_all_tasks_generation(is_all_tasks)
 
 		#For all tests, read tasks
 		for excercise in self.test.get_excercises():
@@ -141,7 +145,7 @@ class AssignmentsList(Functions.StructList):
 			prefix = self.get_prefix_to_append(assignment)
 			self.dict_assignments[prefix].append(assignment)
 
-	def generate_by_prefix(self, prefix: str, output_file: str = None, with_prefix: bool = True) -> [str, None]:
+	def generate_by_prefix(self, prefix: str, output_file: str = None, with_prefix: bool = True, is_all_tasks: bool = False) -> [str, None]:
 		'''Function to generate all available assignments from list'''
 
 		#If this is "other" prefix, return nothing, because it has another generator
@@ -156,7 +160,7 @@ class AssignmentsList(Functions.StructList):
 			generation_folder = assignments[0].generation_folder
 
 			#Generate only content
-			content = "\n".join([assignment.generate(only_content=True) for assignment in assignments])
+			content = "\n".join([assignment.generate(only_content=True, is_all_tasks=is_all_tasks) for assignment in assignments])
 
 			#Then get document string 
 			document_string = layout.get_document_string_wth_content(content)
@@ -181,13 +185,13 @@ class AssignmentsList(Functions.StructList):
 				with open(path.get_full_path(), "w") as file:
 					file.write(document_string)
 
-	def generate_as_single(self, output_file: str = None, with_prefix: bool = True, prefix_name: str = "__other__") -> [list[str]]:
+	def generate_as_single(self, output_file: str = None, with_prefix: bool = True, prefix_name: str = "__other__", is_all_tasks: bool = False) -> [list[str]]:
 		'''Function to generate signle assignments from prefix name'''
 
 		documents = []
 		for assignment in self.dict_assignments.get(prefix_name):
 			#For all assignments in this prefix name, generate individual assignment document
-			document = assignment.generate(output_file, with_prefix)
+			document = assignment.generate(output_file, with_prefix, is_all_tasks=is_all_tasks)
 			documents.append(document)
 
 		if not output_file:
@@ -195,13 +199,14 @@ class AssignmentsList(Functions.StructList):
 		else:
 			return []
 
-	def generate(self, output_file: str = None, with_prefix: bool = True, separated: bool = False) -> [list[str], None]:
+	def generate(self, output_file: str = None, with_prefix: bool = True, separated: bool = False, is_all_tasks: bool = False) -> [list[str], None]:
 		'''
 		Function to generate all possible files
 		Arguments:
 		- 'output_file': string of the output file
 		- 'with_prefix': generate file with prefix in name (by default - True)
 		- 'separated': generate files with similar assignment types separately (by default - False: means merge all similar in one file)
+		- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 		'''
 
 		#First of all - sort all files to layouts
@@ -212,11 +217,11 @@ class AssignmentsList(Functions.StructList):
 		for prefix in self.dict_assignments.keys():
 			if prefix != "__other__" and not separated:
 				#If prefix is not in others, and files without separating - generate document by prefix
-				document = self.generate_by_prefix(prefix, output_file, with_prefix)
+				document = self.generate_by_prefix(prefix, output_file, with_prefix, is_all_tasks)
 				documents.append(document)
 			else:
 				#Otherwise generate others (or, if separated, generate them separately), and just add list of documents into documents list
-				documents_ = self.generate_as_single(output_file, with_prefix, prefix)
+				documents_ = self.generate_as_single(output_file, with_prefix, prefix, is_all_tasks)
 				documents += documents_
 
 		if not output_file:
