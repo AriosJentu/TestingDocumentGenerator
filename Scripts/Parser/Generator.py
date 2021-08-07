@@ -1,12 +1,13 @@
-from ..Generators import Entries
+from Scripts import EntryStudents
+from Scripts import Assignments
+from Scripts import Functions
 
-from . import Parser
-from . import Modules
-from . import Arguments
+from Scripts.Generators import Entries
 
-from .. import EntryStudents
-from .. import Assignments
-from .. import Functions
+from Scripts.Parser import Parser
+from Scripts.Parser import Modules
+from Scripts.Parser import Arguments
+
 
 class Generator:
 	'''

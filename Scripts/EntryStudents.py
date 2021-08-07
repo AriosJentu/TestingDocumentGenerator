@@ -1,6 +1,6 @@
-from .Generators import Entries
+from Scripts import Functions
 
-from . import Functions
+from Scripts.Generators import Entries
 
 class EmptyStudents(Entries.Entries):
 	'''

@@ -1,9 +1,10 @@
-from .Generators import Tests
-from .Generators import Entries
-from .Generators import Documents
+from Scripts import Functions
 
-from . import Functions
-from .Parser import Modules
+from Scripts.Generators import Tests
+from Scripts.Generators import Entries
+from Scripts.Generators import Documents
+
+from Scripts.Parser import Modules
 
 class Assignment:
 	'''

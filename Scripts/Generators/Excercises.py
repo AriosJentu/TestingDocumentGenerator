@@ -1,5 +1,6 @@
 import random
-from . import Tasks
+
+from Scripts.Generators import Tasks
 
 class GeneratedExcercise:
 	'''

@@ -1,7 +1,7 @@
-from ..Generators import Entries
+from Scripts import Functions
 
-from . import Parser
-from .. import Functions
+from Scripts.Generators import Entries
+from Scripts.Parser import Parser
 
 class ArgumentsParser:
 	'''

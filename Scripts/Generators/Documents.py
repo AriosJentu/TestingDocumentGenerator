@@ -1,7 +1,8 @@
-from . import Tests
-from . import Excercises
-from .. import Functions
-from ..Parser import Modules
+from Scripts import Functions
+
+from Scripts.Generators import Tests
+from Scripts.Generators import Excercises
+from Scripts.Parser import Modules
 
 class Page(str):
 	'''Define Page class as string class'''
@@ -16,7 +17,7 @@ class Layout(str):
 class Content(str):
 	'''Define Content class as string class'''
 	pass
-	
+
 
 class PageValues(Functions.Struct):
 	'''

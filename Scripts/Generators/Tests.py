@@ -1,4 +1,4 @@
-from . import Excercises
+from Scripts.Generators import Excercises
 
 class GeneratedTest:
 	'''

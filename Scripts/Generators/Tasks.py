@@ -1,4 +1,4 @@
-from .. import Functions
+from Scripts import Functions
 
 class Task:
 	'''
