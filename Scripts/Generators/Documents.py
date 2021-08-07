@@ -1,5 +1,7 @@
 from . import Tests
+from . import Excercises
 from .. import Functions
+from ..Parser import Modules
 
 class Page(str):
 	'''Define Page class as string class'''
@@ -65,6 +67,22 @@ class PageStyle:
 		self.excercise_format = excercise_format_string
 		self.tasks_format = tasks_format_string
 
+	def __format_excercise__(self, excercise: Excercises.GeneratedExcercise) -> str:
+		'''Function to format excercise'''
+
+		#First of all - format all tasks of this excercise
+		tasks_formatted = []
+
+		for task in excercise:
+			task_string = self.tasks_format.format(task=task.get_task())
+			tasks_formatted.append(task_string)
+
+		#Merge all tasks with new lines
+		excercise_tasks = "\n".join(tasks_formatted)
+
+		#Format excercise with title and formated tasks
+		return self.excercise_format.format(title=excercise.get_title(), tasks=excercise_tasks)
+
 	def generate_page(self, 
 			format_arguments: PageValues, 
 	) -> Page:
@@ -76,32 +94,17 @@ class PageStyle:
 
 		#Generate test for this page from available test option format of PageValues object
 		generated_test = format_arguments.generate_test()
-
 		excercises_formatted = []
 		
 		#For all excercises from this generated test
 		for excercise in generated_test:
-			
-			#First of all - format all tasks of this excercise
-			tasks_formatted = []
 
-			for task in excercise:
-				task_string = self.tasks_format.format(task=task.get_task())
-				tasks_formatted.append(task_string)
-
-			#Merge all tasks with new lines
-			excercise_tasks = "\n".join(tasks_formatted)
-
-			#Format excercise with title and formated tasks
-			excersise_formatted = self.excercise_format.format(title=excercise.get_title(), tasks=excercise_tasks)
-			
-			#Add this formatted excercise in list of formatted excercises
+			#Format excercise with title and formated tasks and add it in list of formatted excercises
+			excersise_formatted = self.__format_excercise__(excercise)
 			excercises_formatted.append(excersise_formatted)
 
-		#Merge all excercises
+		#Merge all excercises and put this content inside page
 		page_excercises = "\n".join(excercises_formatted)
-
-		#Put this content inside
 		page_content = self.test_option_format.format(**format_arguments.dict(), excercises=page_excercises)
 
 		return Page(page_content)
@@ -122,10 +125,16 @@ class DocumentLayout:
 			layout_path: str,
 			page_style: PageStyle,
 			content_string: str = "#CONTENT#",
+			module_path_string: str = "#MODULE#",
 	):
 		self.layout = layout_path
 		self.pagestyle = page_style
 		self.contentstr = content_string
+		self.modulepathstr = module_path_string
+		self.module = None
+
+	def set_module(self, module: Modules.Module):
+		self.module = module
 
 	def read_layout(self) -> Layout:
 		'''Function to read document layout'''
@@ -133,7 +142,12 @@ class DocumentLayout:
 		with open(self.layout) as file:
 			layout = file.read()
 
+		#Replace module_path with path of module
+		layout = self.__replace_layout_module_path__(layout)
 		return Layout(layout)
+
+	def __replace_layout_module_path__(self, layout_str: str):
+		return layout_str.replace(self.modulepathstr, self.module.path)
 
 	def generate_page(self, page_values: PageValues) -> Page:
 		return self.pagestyle.generate_page(page_values)
