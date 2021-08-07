@@ -112,7 +112,7 @@ class TasksGetter:
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.tasks) == 0:
-			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information'?")
+			raise Functions.TestingException(Functions.TestingException.NoTasks)
 
 		#If there is already no unused tasks, regenerate them
 		if len(self.unused_tasks) == 0:
@@ -134,6 +134,15 @@ class TasksGetter:
 		self.filepath = Functions.Path.join(prefix_path, self.filepath)
 		self.update_filepath(self.filepath)
 
+	def get_all_tasks_strings(self) -> list[str]:
+		'''Function to get all tasks strings (using for debug all tasks in document)'''
+
+		#Throw exception if there is no tasks (by task count)
+		if len(self.tasks) == 0:
+			raise Functions.TestingException(Functions.TestingException.NoTasks)
+
+		return self.tasks
+
 class Tasks(TasksGetter):
 	'''
 	Tasks - parent class to define all possible types of tasks, with all methods which must be presented in task generator. Based on class TasksGetter
@@ -144,6 +153,7 @@ class Tasks(TasksGetter):
 	- 'read_information': for read tasks information (doesn't need to return anything)
 	- 'generate_task': for generating task (must return object of class Task)
 	- 'add_prefix_path': for appending prefix path of the module
+	- 'get_all_tasks': to debug all tasks appearance (must return list of objects of class Task - all tasks for this tasks package)
 	'''
 
 	def __init__(self):
@@ -156,12 +166,36 @@ class Tasks(TasksGetter):
 		'''Function to set updating task string function. Without arguments it reseting function to default - nothing to update'''
 		self.updater = updater
 
+	def read_information(self):
+		'''Function to read all information about tasks. Must be callable only ones'''
+		return super().read_information()
+
 	def generate_task(self) -> Task:
 		'''Function to choose random task from list of tasks. Default generator overrided to generate tasks from path'''
 
 		task = Task(self.generate_task_string())
 		task.update_task_string_with(self.updater)
 		return task
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for the tasks of this type'''
+		return super().add_prefix_path(prefix_path)
+
+	def get_all_tasks(self) -> list[Task]:
+		'''Function to get all tasks in it's appear order (using for debug all tasks in document)'''
+
+		#Throw exception if there is no tasks (by task count)
+		if len(self.tasks) == 0:
+			raise Functions.TestingException(Functions.TestingException.NoTasks)
+
+		#Add task filepath to the all tasks to debug them
+		tasks = [Task("\n"+self.filepath)]
+		for task in self.tasks:
+			rtask = Task(task)
+			rtask.update_task_string_with(self.updater)
+			tasks.append(rtask)
+
+		return tasks
 
 class BasicTasks(Tasks):
 	'''
@@ -278,7 +312,7 @@ class SpecificTasks(Tasks):
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.all_tasks) == 0:
-			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?")
+			raise Functions.TestingException(Functions.TestingException.NoTasksSpecific)
 		
 		#If there is no possibility to generate task, refresh all tasks possibilities
 		if len(self.tasks) == 0:
@@ -300,6 +334,21 @@ class SpecificTasks(Tasks):
 		'''Function to add prefix path for the specific tasks'''
 		for task in self.all_tasks:
 			task.add_prefix_path(prefix_path)
+
+	def get_all_tasks(self) -> list[Task]:
+		'''Function to get all tasks in it's appear order (using for debug all tasks in document)'''
+
+		#Throw exception if there is no tasks (by task count)
+		if len(self.all_tasks) == 0:
+			raise Functions.TestingException(Functions.TestingException.NoTasksSpecific)
+
+		#For specific tasks add filepath to them before task
+		tasks = []
+		for task in self.all_tasks:
+			tasks.append(Task("\n"+task.filepath+"\n"))
+			tasks.append(task.get_task())
+
+		return tasks
 
 class MultiTasks(Tasks):
 	'''
@@ -333,7 +382,7 @@ class MultiTasks(Tasks):
 
 		#Throw exception if there is no tasks (by task count)
 		if len(self.list_tasks) == 0:
-			raise Functions.TestingException("There is no tasks. Maybe you need to generate them with 'read_information' or append some Tasks into this class?")
+			raise Functions.TestingException(Functions.TestingException.NoTasksMulti)
 
 		tasks_index = self.generate_task_index()
 
@@ -344,17 +393,33 @@ class MultiTasks(Tasks):
 		for task in self.list_tasks:
 			task.add_prefix_path(prefix_path)
 
+
+	def get_all_tasks(self) -> list[Task]:
+		'''Function to get all tasks in it's appear order (using for debug all tasks in document)'''
+
+		#Throw exception if there is no tasks (by task count)
+		if len(self.list_tasks) == 0:
+			raise Functions.TestingException(Functions.TestingException.NoTasksMulti)
+
+		return [task for tasks in self.list_tasks for task in tasks.get_all_tasks()]
+
 class TasksInformation:
 	'''
 	TasksInformation - Class to work with tasks information. Containing object of Tasks class with it's repeating count.
 	Initial arguments:
 	- 'tasks': Tasks object (as objects of Tasks class and it's subclasses)
-	- 'repeating': Count of repeating tasks of this type in question
+	- 'repeating': Count of repeating tasks of this type in question (works if parameter is_all_tasks is False)
+	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
 	'''
 
-	def __init__(self, tasks: Tasks, repeating: int = 1):
+	def __init__(self, tasks: Tasks, repeating: int = 1, is_all_tasks: bool = False):
 		self.tasks = tasks
 		self.repeating = max(1, int(repeating))
+		self.is_all_tasks = is_all_tasks
+
+	def set_all_tasks_generation(self, is_all_tasks: bool = False):
+		'''Function to set variable of generating all tasks'''
+		self.is_all_tasks = is_all_tasks
 
 	def get_tasks(self):
 		'''Function to get list of all tasks in this information object'''
@@ -364,14 +429,24 @@ class TasksInformation:
 		'''Function to generate list of tasks for this 'Tasks' class. Returns list of objects of Task class'''
 
 		tasks = []
-		for _ in range(self.repeating):
-			tasks.append(self.tasks.generate_task())
+		#By default, if tasks no repeating, generate them all as repeating
+		if not self.is_all_tasks:
+			for _ in range(self.repeating):
+				tasks.append(self.tasks.generate_task())
+
+		#If need's to be generated all tasks, generate them all
+		if self.is_all_tasks:
+			tasks = self.tasks.get_all_tasks()
 
 		return tasks
 
 	def add_prefix_path(self, prefix_path: str):
 		'''Function to add prefix path for tasks in this tasks information'''
 		self.tasks.add_prefix_path(prefix_path)
+
+	def get_all_tasks(self) -> list[Task]:
+		'''Function to get all tasks in it's appear order (using for debug all tasks in document)'''
+		return self.tasks.get_all_tasks()
 
 	def __str__(self):
 		return f"TasksInformation:\nR - {self.repeating}: {self.tasks}"
