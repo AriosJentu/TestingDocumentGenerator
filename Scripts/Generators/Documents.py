@@ -136,7 +136,7 @@ class DocumentLayout:
 	def set_module(self, module: Modules.Module):
 		self.module = module
 
-	def read_layout(self) -> Layout:
+	def get_layout(self) -> Layout:
 		'''Function to read document layout'''
 		layout = ""
 		with open(self.layout) as file:
@@ -146,7 +146,7 @@ class DocumentLayout:
 		layout = self.__replace_layout_module_path__(layout)
 		return Layout(layout)
 
-	def __replace_layout_module_path__(self, layout_str: str):
+	def __replace_layout_module_path__(self, layout_str: str) -> str:
 		return layout_str.replace(self.modulepathstr, self.module.path)
 
 	def generate_page(self, page_values: PageValues) -> Page:
@@ -154,7 +154,7 @@ class DocumentLayout:
 
 	def get_document_string_wth_content(self, content: Content) -> str:
 		'''Function to generate document with content from layout'''
-		layout = self.read_layout()
+		layout = self.get_layout()
 		return layout.replace(self.contentstr, content)
 
 	def add_prefix_path(self, prefix_path: str):
