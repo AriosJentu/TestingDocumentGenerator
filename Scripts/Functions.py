@@ -3,7 +3,10 @@ import os
 import os.path
 
 class TestingException(Exception):
-	pass
+	NoTasks = "There is no tasks. Maybe you need to generate them with 'read_information'?"
+	NoTasksSpecific = "There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?"
+	NoTasksMulti = "There is no tasks. Maybe you need to generate them with 'read_information' or append some Tasks into this class?"
+	NoModule = "There is no module"
 
 class Struct:
 	'''
