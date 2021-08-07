@@ -3,7 +3,8 @@ from . import Tasks
 
 class GeneratedExcercise:
 	'''
-	GeneratedExcercise - class with generated tasks and updated title for the excercise
+	GeneratedExcercise - class with generated tasks and updated title 
+		for the excercise
 	Inital arguments:
 	- 'tasks': List of tasks (objects of 'Task' class)
 	- 'title': Title of the excercise
@@ -16,11 +17,15 @@ class GeneratedExcercise:
 		self.tasks = tasks
 		self.title = title
 
+
+	#@Setters
 	def shuffle_tasks(self):
 		'''Function to shuffle tasks'''
 		random.seed()
 		random.shuffle(self.tasks)
 
+
+	#@Getters
 	def get_title(self) -> str:
 		'''Function to get ecxercise title'''
 		return self.title
@@ -29,6 +34,8 @@ class GeneratedExcercise:
 		'''Function to get ecxercise tasks'''
 		return self.tasks
 
+
+	#@Override
 	def __iter__(self):
 		'''Iterate this class with tasks'''
 		for task in self.tasks:
@@ -44,16 +51,24 @@ class GeneratedExcercise:
 
 class Excercise:
 	'''
-	Excercise - class for working with excercises of the document. Containing list of tasks for the excercise and title of the question. Tasks can be mix in different order.
+	Excercise - class for working with excercises of the document. 
+		Containing list of tasks for the excercise and title of the question. 
+		Tasks can be mix in different order.
 	Initial arguments:
-	- 'tasks_info_list': List of the tasks information (list of objects of class 'TasksInformation')
-	- 'title': Title string of the excercise. Can be empty in case of specific tasks, for example
+	- 'tasks_info_list': List of the tasks information 
+		(list of objects of class 'TasksInformation')
+	- 'title': Title string of the excercise. Can be empty in case of 
+		specific tasks, for example
 	- 'shuffle': Shuffle generated tasks for this excercise
-	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
+	- 'is_all_tasks': Key for creating all available tasks in files 
+		(for debug, if True - generate ALL tasks from files, 
+		by default it's False - generate tasks as default)
 	Available attributes:
 	- 'tasks_info_list': List of the tasks information
 	- 'title': Title string of the excercise
-	- 'updater': Function which updates titles of the excercise. It's argument is 'title' of the excercise, and function must return string with updated text
+	- 'updater': Function which updates titles of the excercise. 
+		It's argument is 'title' of the excercise, and function 
+		must return string with updated text
 	'''
 	def __init__(self, 
 			tasks_info_list: list[Tasks.TasksInformation] = None, 
@@ -73,10 +88,17 @@ class Excercise:
 		#Updating title string function
 		self.updater = lambda titlestring: titlestring
 
+
+	#@Setters
 	def append(self, tasks_info: Tasks.TasksInformation):
 		'''Function to append task information into excercise'''
 		tasks_info.set_all_tasks_generation(self.is_all_tasks)
 		self.tasks_info_list.append(tasks_info)
+
+	def add_prefix_path(self, prefix_path: str):
+		'''Function to add prefix path for tasks in this excercise'''
+		for tasksinfo in self.tasks_info_list:
+			tasksinfo.add_prefix_path(prefix_path)
 
 	def set_all_tasks_generation(self, is_all_tasks: bool = False):
 		'''Function to set variable of generating all tasks'''
@@ -86,20 +108,33 @@ class Excercise:
 		for tasks_info in self.tasks_info_list:
 			tasks_info.set_all_tasks_generation(self.is_all_tasks)
 
-	def get_tasks_information_list(self):
-		'''Function to get tasks information list'''
-		return self.tasks_info_list
-
-	def set_title_updater_function(self, updater = lambda titlestring: titlestring):
-		'''Function to set updating excercise title string function. Without arguments it reseting function to default - nothing to update'''
+	def set_title_updater_function(self, 
+			updater = lambda titlestring: titlestring
+	):
+		'''
+		Function to set updating excercise title string function. 
+		Without arguments it reseting function to default - nothing to update
+		'''
 		self.updater = updater
 
 	def set_shuffle_state(self, shuffle: bool = False):
 		'''Function to set excercises shuffled when generate'''
 		self.shuffle = shuffle
 
+
+	#@Getters
+	def get_tasks_information_list(self):
+		'''Function to get tasks information list'''
+		return self.tasks_info_list
+
+
+	#@Generators
 	def generate_excercise(self) -> GeneratedExcercise:
-		'''Function to generate list of tasks for this excercise. Also this function updating title of the excercise. Returns object of 'GeneratedExcercise' class'''
+		'''
+		Function to generate list of tasks for this excercise. 
+		Also this function updating title of the excercise. 
+		Returns object of 'GeneratedExcercise' class
+		'''
 
 		tasks = []
 		for tasks_info in self.tasks_info_list:
@@ -110,13 +145,11 @@ class Excercise:
 		title = self.updater(self.title)
 
 		generated = GeneratedExcercise(tasks, title)
-		#Shuffle tasks if it's available to shuffle, and tasks generating as excercise (not debug all tasks)
+
+		#Shuffle tasks if it's available to shuffle, 
+		# and tasks generating as excercise (not debug all tasks)
 		if self.shuffle and not self.is_all_tasks:
 			generated.shuffle_tasks()
 
 		return generated
 
-	def add_prefix_path(self, prefix_path: str):
-		'''Function to add prefix path for tasks in this excercise'''
-		for tasksinfo in self.tasks_info_list:
-			tasksinfo.add_prefix_path(prefix_path)

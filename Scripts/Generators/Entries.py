@@ -2,11 +2,16 @@ from .. import Functions
 
 class Entries:
 	'''
-	Entries - parent class for defining custom PageInformation readers by lines. By default it read StructList, which after that will be combine with Variant object, to generate then PageInformation object.
-	This class suppose that there is no file needed. Only one parameter - count of random paths.
+	Entries - parent class for defining custom PageInformation readers by 
+		lines. By default it read StructList, which after that will be 
+		combine with Variant object, to generate then PageInformation object.
+	This class suppose that there is no file needed. 
+		Only one parameter - count of random paths.
 	No initial arguments
 	Parameters:
 	- 'ENTRIES_COUNT': count of the entries to generate
+	All child classes must contain methon 'generate_information' which 
+		returns struct list
 	'''
 
 	ENTRIES_COUNT = 10
@@ -14,14 +19,26 @@ class Entries:
 	def __init__(self):
 		pass
 
+
+	#@Generators
 	def generate_information(self) -> Functions.StructList:
-		'''Empty function to override. Need to work with entries count information, and generate List of Structs (StructList object). Then this element will be used in generating variant with data presented in this StructList.'''
+		'''
+		Empty function to override. Need to work with entries count 
+			information, and generate List of Structs (StructList object). 
+			Then this element will be used in generating variant with data 
+			presented in this StructList.
+		'''
 		pass
+
 
 class EntryFromValues(Entries):
 	'''
-	EntriesFromValues - parent class for defining custom PageInformation readers by values. By default it read StructList, which after that will be combine with Variant object, to generate then PageInformation object.
-	This class suppose that there is no file needed. Just dictionary of values, or just Struct.
+	EntriesFromValues - parent class for defining custom PageInformation 
+		readers by values. By default it read StructList, which after that 
+		will be combine with Variant object, to generate 
+		then PageInformation object.
+	This class suppose that there is no file needed. 
+		Just dictionary of values, or just Struct.
 	Initial arguments:
 	- 'element': dictionary of Struct with information about entry
 	Don't need to overload method 'generate_information'
@@ -33,12 +50,18 @@ class EntryFromValues(Entries):
 		
 		self.element = element
 
+
+	#@Generators
 	def generate_information(self) -> Functions.StructList:
 		return Functions.StructList([self.element])
 
+
 class EntriesReader(Entries):
 	'''
-	EntriesReader - parent class for defining custom PageInformation readers by lines. By default it read StructList, which after that will be combine with Variant object, to generate then PageInformation object.
+	EntriesReader - parent class for defining custom PageInformation readers 
+		by lines. By default it read StructList, which after that 
+		will be combine with Variant object, to generate 
+		then PageInformation object.
 	This class suppose to read file
 	Initial arguments:
 	- 'filepath': Path of the file where information will be read
@@ -47,6 +70,8 @@ class EntriesReader(Entries):
 	def __init__(self, filepath: str):
 		self.filepath = filepath
 
+
+	#@Readers
 	def read(self):
 		'''Function to read file'''
 		string = ""
@@ -66,9 +91,11 @@ class EntriesReader(Entries):
 
 		return lines
 
+
 class JoinedEntries(Entries):
 	'''
-	JoinedEntries - class which containing list of objects of class Entries, to generate them as one struct list.
+	JoinedEntries - class which containing list of objects of class Entries, 
+		to generate them as one struct list.
 	Inintial arguments:
 	- 'list_entries': list of objects of class Entries
 	Don't need to overload method 'generate_information'
@@ -80,10 +107,14 @@ class JoinedEntries(Entries):
 
 		self.list_entries = list_entries
 
+
+	#@Setters
 	def append(self, entries: Entries):
 		'''Function to append entries into this list'''
 		self.list_entries.append(entries)
 
+
+	#@Generators
 	def generate_information(self) -> Functions.StructList:
 		infos = Functions.StructList()
 		
@@ -93,6 +124,8 @@ class JoinedEntries(Entries):
 
 		return infos
 
+
+	#@Override
 	def __iter__(self):
 		for entries in self.list_entries:
 			yield entries

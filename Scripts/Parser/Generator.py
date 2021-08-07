@@ -14,12 +14,19 @@ class Generator:
 	Contains next arguments:
 	- 'arguments': list of arguments
 	- 'kwarguments': dictionary with keyword arguments
-	- 'assignments_list': list of assignments which will be generated with function 'generate', 
+	- 'assignments_list': list of assignments which will be generated 
+		with function 'generate', 
 	- 'filename': string of basic filename (without extension)
-	- 'fileextension': string of extension of the filename (by default - '.tex')
-	- 'separated': boolean value which indicates separation of the simial type assignments (be default - False)
-	- 'is_all_tasks': Key for creating all available tasks in files (for debug, if True - generate ALL tasks from files, by default it's False - generate tasks as default)
-	Need to override function 'parse_arguments' when use this class as parent, by default function doesn't do nothing. This function must return object of ArgumentsParser class
+	- 'fileextension': string of extension of the filename 
+		(by default - '.tex')
+	- 'separated': boolean value which indicates separation 
+		of the similar type assignments (by default - False)
+	- 'is_all_tasks': Key for creating all available tasks in files 
+		(for debug, if True - generate ALL tasks from files, 
+		by default it's False - generate tasks as default)
+	Need to override function 'parse_arguments' when use this class as parent, 
+		by default function doesn't do nothing. 
+		This function must return object of ArgumentsParser class
 	'''
 
 	def __init__(self, *args, **kwargs):
@@ -32,6 +39,8 @@ class Generator:
 		self.separated = False
 		self.is_all_tasks = False
 
+
+	#@Setters
 	def set_filename(self, filename):
 		self.filename = filename
 
@@ -46,15 +55,21 @@ class Generator:
 		'''Function to set separation of the documents'''
 		self.separated = separated
 
-	def parse_arguments(self) -> Arguments.ArgumentsParser:
-		'''Function to parse available arguments. Must be overloaded'''
-		pass
 
+	#@Readers
 	def read_assignments_list(self, info_module: Modules.Module):
-		'''Function to generate object of class AssignmentsList from arguments parser for this class. 'info_module' must be a object of Module class with AssignmentsInformation object, which is an object of 'AssignmentsInformationClass' class'''
+		'''
+		Function to generate object of class AssignmentsList 
+			from arguments parser for this class. 
+		'info_module' must be a object of Module class 
+			with AssignmentsInformation object, 
+			which is an object of 'AssignmentsInformationClass' class
+		'''
 
 		if not isinstance(info_module, Modules.Module):
-			return Functions.TestingException(Functions.TestingException.NoModule)
+			return Functions.TestingException(
+				Functions.TestingException.NoModule
+			)
 
 		argsparser = self.parse_arguments()
 
@@ -68,19 +83,33 @@ class Generator:
 			#For all numbers from keynumbers for this assignment
 			for number in keynumbers:
 
+				assignment_info = info_module.module.AssignmentsInformation
+				
 				#If this class exists
-				if assignment_class := info_module.module.AssignmentsInformation.get(keynumbers.key, number):
+				if assignment_class := assignment_info.get(
+						keynumbers.key, number
+					):
 
-					#Generate object of this class, set it's entries, and append to assignments list
+					#Generate object of this class, set it's entries, 
+					# and append to assignments list
 					assignment = assignment_class()
 					assignment.set_entries(entries)
 					assignment.set_module(info_module)
 					assignments.append(assignment)
 
-		#Then generate object of class AssignmentsList from this assignments, and add module prefix for this
+		#Then generate object of class AssignmentsList from this assignments, 
+		# and add module prefix for this
 		self.assignments_list = Assignments.AssignmentsList(assignments)
 		self.assignments_list.add_prefix_path(info_module.path)
 
+
+	#@Getters
+	def parse_arguments(self) -> Arguments.ArgumentsParser:
+		'''Function to parse available arguments. Must be overloaded'''
+		pass
+
+
+	#@Generators
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
 		return self.assignments_list.generate(
@@ -90,10 +119,53 @@ class Generator:
 			self.is_all_tasks
 		)
 
+
 class GeneratorWithStudents(Generator):
 	'''
-	GeneratorWithStudents - child class of Generator class, which can parse arguments in way of students.
+	GeneratorWithStudents - child class of Generator class, 
+		which can parse arguments in way of students.
 	'''
+
+	#@Getters
+	def __get_entries_object__(self, entries_list: list[str], group: str = ""):
+		'''Function to get entries object from available entries strings'''
+		
+		entries_obj = Entries.JoinedEntries()
+
+		#If it's all tasks, doesn't matter which entries to generate
+		if self.is_all_tasks:
+			entries_obj.append(EntryStudents.StudentFromValues({
+				"student": "Sample element", 
+				"group": "Sample group"
+			}))
+
+		#If it's not all tasks
+		else:
+
+			for entries in entries_list:
+				
+				#If entries are not filepath, and not decimal, 
+				# then suppose that this is student name
+				if entries and not Functions.Path.isfile(entries) and (
+						not entries.isdecimal()
+				):
+					#If this is student name, suppose next argument 
+					# will be group name
+					entries = EntryStudents.StudentFromValues({
+						"student": entries, 
+						"group": group
+					})
+
+				#If entries are decimals, generate integer of decimals
+				elif entries and entries.isdecimal():
+					entries = int(entries)
+
+				#This time may append not 'entries' element into JoinedEntries,
+				# but in parser it will be parsed 
+				entries_obj.append(entries)
+
+		return entries_obj
+
 	def parse_arguments(self) -> Arguments.ArgumentsParser:
 		'''Function to parse arguments with students classes'''
 
@@ -110,42 +182,31 @@ class GeneratorWithStudents(Generator):
 			self.set_all_tasks_generation(True)
 			args.pop(args.index("-a"))
 
-		#Keys must be 1st argument, after script name, entries must be 2nd argument
+		#Keys must be 1st argument, after script name, entries 
+		# must be 2nd argument
 		keys = args[1]
 		
-		#If it's all tasks, doesn't matter which entries to generate
-		if self.is_all_tasks:
-			entries_obj = Entries.JoinedEntries()
-			entries_obj.append(EntryStudents.StudentFromValues({"student": "Sample element", "group": "Sample group"}))
+		#Parse entries list and group if possible
+		entries_list = args[2].split(";") or ""
+		group = args[3] or "Group Name"
 
-		#If it's not all tasks
-		else:
-			entries_list = args[2].split(";")
+		#Parse entries objects
+		entries_obj = self.__get_entries_object__(entries_list, group)
 
-			entries_obj = Entries.JoinedEntries()
-
-			for entries in entries_list:
-				
-				#If entries are not filepath, and not decimal, then suppose that this is student name
-				if entries and not Functions.Path.isfile(entries) and not entries.isdecimal():
-					#If this is student name, suppose next argument will be group name
-					group = args[3] or "Group Name"
-					entries = EntryStudents.StudentFromValues({"student": entries, "group": group})
-
-				#If entries are decimals, generate integer of decimals
-				elif entries and entries.isdecimal():
-					entries = int(entries)
-
-				#This time may append not 'entries' element into JoinedEntries, but in parser it will be parsed 
-				entries_obj.append(entries)
-
-
-		#Generate argument parser with keys, entries, and Students Entries classes
+		#Generate argument parser with keys, entries, 
+		# and Students Entries classes
 		arguments_parser = Arguments.ArgumentsParser(keys, entries_obj)
-		arguments_parser.set_entries_class(EntryStudents.StudentsReader, EntryStudents.EmptyStudents, EntryStudents.StudentFromValues)
+		arguments_parser.set_entries_class(
+			EntryStudents.StudentsReader, 
+			EntryStudents.EmptyStudents, 
+			EntryStudents.StudentFromValues
+		)
 		
 		#Set filename with group names of all available entries:
-		string = "_".join([entries.get_group_name() for entries in arguments_parser.parse_entries()])
+		string = "_".join([
+			entries.get_group_name() 
+			for entries in arguments_parser.parse_entries()
+		])
 		self.set_filename(string)
 
 		return arguments_parser
