@@ -1,9 +1,6 @@
 # Simple Testing Document Generator
 A simple script that allows you to create documents based on document patterns and a custom tasks list.
 
-# Table of contents
-[TOC]
-
 # Overview
 Simple Testing Document Generator is a project for generating documents based on moduling system. Any module that meets the design requirements of the project can be used to create documents that satisfy certain user-defined layouts. 
 Information about module design can be found on wiki-page about Modules.
