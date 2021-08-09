@@ -4,8 +4,6 @@ from Scripts.Generators import Tests
 from Scripts.Generators import Entries
 from Scripts.Generators import Documents
 
-from Scripts.Parser import Modules
-
 class Assignment:
 	'''
 	Assignment - parent class to work with assignments, containing 
@@ -31,9 +29,6 @@ class Assignment:
 	- 'generation_folder' - String with folder name where generated 
 		files will be posted. 
 		By default it's 'Generated/' folder, but also can be empty.
-	- 'module' - Module object which respects to this assignment class. 
-		Must be stay default, sets in generation automatically. 
-		Helps to detect 'module' path
 	Can be read in that order:
 	Specific document 'layout' for every page must contain format of 
 		'test' for every possible 'entries'. 
@@ -54,7 +49,6 @@ class Assignment:
 	prefix: str = "prefix"
 	number: int = 0
 	generation_folder: str = "Generated/"
-	module: Modules.Module = None
 
 
 	#@Setters
@@ -67,9 +61,6 @@ class Assignment:
 
 	def set_entries(self, entries: Entries.Entries):
 		self.entries = entries
-
-	def set_module(self, module: Modules.Module):
-		self.module = module
 
 
 	#@Readers
@@ -144,8 +135,6 @@ class Assignment:
 		pages_information = self.__generate_pages_information__()
 
 		#Then generate Document object with containing pages information 
-		# (with update layout module)
-		self.layout.set_module(self.module)
 		document = Documents.Document(self.layout, pages_information)
 			
 		#If there is no output file, return just string

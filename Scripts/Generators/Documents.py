@@ -171,19 +171,16 @@ class DocumentLayout:
 		self.pagestyle = page_style
 		self.contentstr = content_string
 		self.modulepathstr = module_path_string
-		self.module = None
 
 
 	#@Setters
-	def set_module(self, module: Modules.Module):
-		self.module = module
-
 	def add_prefix_path(self, prefix_path: str):
 		'''Function to add prefix path for layouts'''
 		self.layout = Functions.Path.join(prefix_path, self.layout)
 
 	def __replace_layout_module_path__(self, layout_str: str) -> str:
-		return layout_str.replace(self.modulepathstr, self.module.path)
+		modulepath = Modules.CurrentModule.get_current_module_path()
+		return layout_str.replace(self.modulepathstr, modulepath)
 
 
 	#@Getters

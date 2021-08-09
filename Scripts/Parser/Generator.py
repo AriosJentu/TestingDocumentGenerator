@@ -8,7 +8,6 @@ from Scripts.Parser import Parser
 from Scripts.Parser import Modules
 from Scripts.Parser import Arguments
 
-
 class Generator:
 	'''
 	Generator - parent class which can generate documents from script arguments.
@@ -95,7 +94,6 @@ class Generator:
 					# and append to assignments list
 					assignment = assignment_class()
 					assignment.set_entries(entries)
-					assignment.set_module(info_module)
 					assignments.append(assignment)
 
 		#Then generate object of class AssignmentsList from this assignments, 
