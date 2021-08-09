@@ -14,7 +14,11 @@ tasks_format = "\n\t\t\t{task}"
 layout_location = "Information/Layouts/sample.tex"
 
 #Page style variable
-page_style = Imports.Documents.PageStyle(test_format, excercise_format, tasks_format)
+page_style = Imports.Documents.PageStyle(
+	test_format, 
+	excercise_format, 
+	tasks_format
+)
 
 #Tasks update functions
 def tasks1_update_task(string):
@@ -45,7 +49,11 @@ for i in range(7):
 	if i in [1, 2]:
 		appearing_count = 2
 
-	task = Imports.Tasks.SpecificTaskInfo(prefix+f"Special/variant{i+1}.tex", appearing_count)
+	task = Imports.Tasks.SpecificTaskInfo(
+		prefix+f"Special/variant{i+1}.tex", 
+		appearing_count
+	)
+
 	if i == 4:
 		task.set_updater_function(tasks3p4_update_task)
 	
@@ -64,7 +72,7 @@ excercise2 = Imports.Excercises.Excercise(tasks2info,
 excercise3 = Imports.Excercises.Excercise(tasks3info)
 
 #Third task doesn't need to have title, but it's possible
-#Shuffle 2nd excercise's tasks, and set title updater function for 1st excercise
+#Shuffle 2nd excercise tasks, and set title updater function for 1st excercise
 excercise1.set_title_updater_function(excercise1_update_title_function)
 excercise2.set_shuffle_state(True)
 
@@ -73,6 +81,9 @@ class Test2(Imports.Assignments.Assignment):
 
 	layout = Imports.Documents.DocumentLayout(layout_location, page_style)
 	test = Imports.Tests.Test([excercise1, excercise2, excercise3])
-	document_entry = Imports.Functions.Struct(control_event=control_event, event_number=event_number)
+	Imports.Entries.DocumentEntries(
+		control_event=control_event, 
+		event_number=event_number
+	)
 	prefix = "tests"
 	number = event_number
