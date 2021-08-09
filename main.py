@@ -10,7 +10,7 @@ if __name__ == "__main__":
 	Modules.CurrentModule.set_current_module(current_module)
 
 	generator = Generator.GeneratorWithStudents(argv)
-	generator.read_assignments_list(modules.get_module(argv[1]))
+	generator.read_assignments_list(current_module)
 	generator.generate()
 	print(generator.filename)
 
