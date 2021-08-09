@@ -47,7 +47,7 @@ class Test:
 
 
 	#@Setters
-	def add(self, excercise: Excercises.Excercise):
+	def append(self, excercise: Excercises.Excercise):
 		'''Function to add excercise into this test'''
 		excercise.set_all_tasks_generation(self.is_all_tasks)
 		self.excercises.append(excercise)
