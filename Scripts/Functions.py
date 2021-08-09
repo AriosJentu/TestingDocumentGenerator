@@ -176,6 +176,10 @@ class Path:
 		]
 
 	@staticmethod
+	def makedir_if_not_exists(dirname: str):
+		os.makedirs(dirname, exist_ok=True)
+
+	@staticmethod
 	def join(*paths: list[str]):
 		return os.path.join(*paths)
 
