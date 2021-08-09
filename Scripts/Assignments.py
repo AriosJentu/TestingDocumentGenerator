@@ -15,7 +15,7 @@ class Assignment:
 	- 'entries' - 'Entries' with their 'generate_information' method. 
 		This value can't be default, because it's generating by user's asking.
 		For this situation exist method 'set_entries'
-	- 'document_entry' - 'Struct' with additional information, 
+	- 'document_entries' - 'DocumentEntries' with additional information, 
 		which presented in pagestyle excercises format string. 
 		This argument may not be presented in class, 
 		by default it's empty entry
@@ -45,7 +45,7 @@ class Assignment:
 	layout: Documents.DocumentLayout
 	test: Tests.Test
 	entries: Entries.Entries
-	document_entry: Functions.Struct = Functions.Struct()
+	document_entries: Entries.DocumentEntries = Entries.DocumentEntries()
 	prefix: str = "prefix"
 	number: int = 0
 	generation_folder: str = "Generated/"
@@ -94,7 +94,7 @@ class Assignment:
 			# document entry information, and add them class of Test format
 			page_values = Documents.PageValues(
 				**entry.dict(), 
-				**self.document_entry.dict(), 
+				**self.document_entries.dict(), 
 				test_option=self.test
 			)
 

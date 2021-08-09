@@ -129,3 +129,12 @@ class JoinedEntries(Entries):
 	def __iter__(self):
 		for entries in self.list_entries:
 			yield entries
+
+
+class DocumentEntries(Functions.Struct):
+	'''
+	DocumentEntries - class to work with some variables of the document, 
+		to replace them in Document Layout
+	Initial arguments - only keyword arguments with values of entries
+	'''		
+	pass
