@@ -51,7 +51,12 @@ class ModulesLoader:
 
 	#@Readers
 	def read_modules(self):
-		'''Function to real Modules folder for modules'''
+		'''
+		Function to real Modules folder for modules
+		Modules will be import, also sets variable 'MODULE_PATH'
+		After imports, current_module will be cleared
+		It must imply that every module has it's own variable of MODULE_PATH
+		'''
 
 		#For all directories in Modules folder
 		for directory in Functions.Path.list_dirs(self.MODULES_DIRECTORY):
@@ -64,9 +69,15 @@ class ModulesLoader:
 
 			#If this folder can be read as Module
 			if module.is_module():
-				#Import it
+				#Firstly - save this module as current
+				CurrentModule.set_current_module(module)
+
+				#Import it:
 				module.import_module()
 				self.modules.append(module)
+
+		#Then clear current module
+		CurrentModule.clear_current_module()
 
 
 	#@Getters
@@ -85,6 +96,12 @@ class ModulesLoader:
 				#Return this module
 				return module
 
+		else: 
+			#If there is no module, raise exception
+			raise Functions.TestingException(
+				Functions.TestingException.NoModule
+			)
+
 
 	#@Override
 	def __iter__(self):
@@ -98,3 +115,43 @@ class ModulesLoader:
 
 	def __repr__(self):
 		return self.__str__()
+
+
+class CurrentModule:
+	'''
+	CurrentModule - class to get and set information about current module 
+		in use.
+	It will create simple hidden directory with information file,
+		which will be loaded with the same class
+	'''
+	DIR_NAME = ".info"
+	FILE_NAME = "module"
+
+	@staticmethod
+	def openfile(mode="r"):
+		return open(
+			Functions.Path.join(
+				CurrentModule.DIR_NAME, 
+				CurrentModule.FILE_NAME
+			), 
+		mode)
+
+	@staticmethod
+	def set_current_module(module: Module):
+		'''Function to set current module'''
+		Functions.Path.makedir_if_not_exists(CurrentModule.DIR_NAME)
+		with CurrentModule.openfile("w") as file:
+			file.write(module.path)
+
+	@staticmethod
+	def get_current_module_path() -> str:
+		'''Function to get current module'''
+		with CurrentModule.openfile() as file:
+			return file.read()
+
+	@staticmethod
+	def clear_current_module():
+		'''Function to clear current module'''
+		with CurrentModule.openfile("w") as file:
+			file.write("")
+
