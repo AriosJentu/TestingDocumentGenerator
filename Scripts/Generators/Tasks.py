@@ -294,6 +294,19 @@ class Tasks(TasksGetter):
 		return task
 
 
+class EmptyTask(Tasks):
+	'''
+	EmptyTasks - Class to work with tasks which are without any
+		information. 
+	'''
+
+	def __init__(self):
+		super().__init__()
+
+	#@Readers
+	def read_information(self):
+		self.tasks = [""]
+
 
 class BasicTasks(Tasks):
 	'''
