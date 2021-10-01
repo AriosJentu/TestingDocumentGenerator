@@ -69,11 +69,7 @@ class ModulesLoader:
 
 			#If this folder can be read as Module
 			if module.is_module():
-				#Firstly - save this module as current
-				CurrentModule.set_current_module(module)
-
-				#Import it:
-				module.import_module()
+				#Append to modules
 				self.modules.append(module)
 
 		#Then clear current module
@@ -93,6 +89,13 @@ class ModulesLoader:
 
 			#If module path is exists as Modules path or just name
 			if check1 or check2:
+
+				#Firstly - save this module as current
+				CurrentModule.set_current_module(module)
+				
+				#Then import this module
+				module.import_module()
+				
 				#Return this module
 				return module
 
