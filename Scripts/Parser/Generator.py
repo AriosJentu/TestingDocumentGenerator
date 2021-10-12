@@ -157,7 +157,12 @@ class GeneratorWithStudents(Generator):
 
 				#If entries are decimals, generate integer of decimals
 				elif entries and entries.isdecimal():
-					entries = int(entries)
+
+					count = int(entries)
+					
+					entries = EntryStudents.EmptyStudents()
+					entries.ENTRIES_COUNT = count
+					entries.group = group
 
 				#This time may append not 'entries' element into JoinedEntries,
 				# but in parser it will be parsed 
@@ -186,8 +191,13 @@ class GeneratorWithStudents(Generator):
 		keys = args[1]
 		
 		#Parse entries list and group if possible
-		entries_list = args[2].split(";") or ""
-		group = args[3] or "Group Name"
+		entries_list = ""
+		if args[2]:
+			entries_list = args[2].split(";")	
+
+		group = ""
+		if args[3]:
+			group = args[3]
 
 		#Parse entries objects
 		entries_obj = self.__get_entries_object__(entries_list, group)

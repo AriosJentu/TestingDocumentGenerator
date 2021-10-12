@@ -86,15 +86,6 @@ class ArgumentsParser:
 		if isinstance(entries, dict):
 			#Generate struct list from this dictionary
 			return self.entries_from_values(entries)
-
-		#If this is integer
-		if isinstance(entries, int) or (
-				isinstance(entries, str) and entries.isdecimal()
-		):
-			#Return entries without filepath with count of entries
-			new_entries = self.entries_no_path()
-			new_entries.ENTRIES_COUNT = int(entries)
-			return new_entries
 			
 		#If type of entries is class Entries
 		if isinstance(entries, Entries.Entries):

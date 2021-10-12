@@ -8,12 +8,14 @@ class EmptyStudents(Entries.Entries):
 		based on class parameter. No need to open files
 	'''
 
+	def __init__(self):
+		self.group = ""
+
 	#@Getters
 	def get_group_name(self, default: str = None) -> str:
 		if not default:
-			default = f"n{self.ENTRIES_COUNT}students"
+			default = f"n{self.ENTRIES_COUNT}students{self.group}"
 		return default
-
 
 	#@Generators
 	def generate_information(self) -> Functions.StructList:
@@ -24,9 +26,10 @@ class EmptyStudents(Entries.Entries):
 		structs = Functions.StructList()
 		for index in range(self.ENTRIES_COUNT):
 			#Append indicies for student names
+			group = self.group if self.group != "" else "Sample group name"
 			structs.append(Functions.Struct(
 				student=f"A{index+1}", 
-				group="Sample group name"
+				group=group
 			))
 
 		return structs
