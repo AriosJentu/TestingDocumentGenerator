@@ -215,7 +215,7 @@ class GeneratorWithStudents(Generator):
 		string = "_".join([
 			entries.get_group_name() 
 			for entries in arguments_parser.parse_entries()
-		])
+		])[:200]
 		self.set_filename(string)
 
 		return arguments_parser
