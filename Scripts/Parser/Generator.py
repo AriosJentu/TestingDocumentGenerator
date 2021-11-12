@@ -39,6 +39,9 @@ class Generator:
 		self.separated = False
 		self.is_all_tasks = False
 
+		#Log for saving any information to show in generation
+		self.log = []
+
 
 	#@Setters
 	def set_filename(self, filename):
@@ -76,14 +79,18 @@ class Generator:
 		assignments_kn = argsparser.parse_assignments_keynumbers()
 		entries = argsparser.parse_entries()
 
+		#Get information about assignments in module
+		assignment_info = info_module.module.AssignmentsInformation
+
+		#List for logging of non-available elements
+		non_found = []
+
 		assignments = []
 		#For all keynumbers for assignments
 		for keynumbers in assignments_kn:
 
 			#For all numbers from keynumbers for this assignment
 			for number in keynumbers:
-
-				assignment_info = info_module.module.AssignmentsInformation
 				
 				#If this class exists
 				if assignment_class := assignment_info.get(
@@ -95,6 +102,28 @@ class Generator:
 					assignment = assignment_class()
 					assignment.set_entries(entries)
 					assignments.append(assignment)
+				else:
+					#Otherwice - append this element to non-existant
+					non_found.append(keynumbers.key+str(number))
+
+		#If there are some not founded classes
+		if len(non_found) > 0:
+			#Save information to log
+			ending = "" if len(non_found) == 1 else "es"
+			notfounded = ", ".join(non_found)
+			self.log.append(f"Class{ending} [{notfounded}] not found")
+
+		#If there is no assignments
+		if len(assignments) == 0:
+			#Save information about all available assignments into log
+			self.log.append(f"Available assignments for {str(info_module)}:")
+			
+			#Add all assignments into log
+			for key, numbers in assignment_info.get_dict_assignments().items():
+				#Read description
+				descr = assignment_info.get_description(key)
+
+				self.log.append(f"\t- {key}: {str(numbers)} - {descr}")
 
 		#Then generate object of class AssignmentsList from this assignments, 
 		# and add module prefix for this
@@ -107,10 +136,24 @@ class Generator:
 		'''Function to parse available arguments. Must be overloaded'''
 		pass
 
+	def get_log(self) -> str:
+		'''Function to get all log information'''
+		return "\n".join(self.log)
 
 	#@Generators
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
+
+		#If there is exist at least one assignment - show information about
+		# generated assignment
+		if len(self.assignments_list) > 0:
+			#Save log information about generated output file name
+			ending = "" if len(self.assignments_list) == 1 else "s"
+			self.log.append(
+				f"Generate document{ending} with last name '{self.filename}'"
+			)
+
+		#Generate assignments
 		return self.assignments_list.generate(
 			self.filename+self.fileextension, 
 			with_prefix, 

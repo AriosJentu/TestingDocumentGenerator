@@ -12,6 +12,6 @@ if __name__ == "__main__":
 	generator = Generator.GeneratorWithStudents(argv)
 	generator.read_assignments_list(current_module)
 	generator.generate()
-	print(generator.filename)
+	print(generator.get_log())
 
 	Modules.CurrentModule.clear_current_module()
