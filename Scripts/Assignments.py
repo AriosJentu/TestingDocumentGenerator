@@ -63,6 +63,28 @@ class Assignment:
 		self.entries = entries
 
 
+	#@Getters
+	def __get_output_file_name__(self, 
+			appending_string: str, 
+			with_prefix: bool = True,
+			as_path: bool = False
+	) -> str:
+		'''Function to get output path of assignment with full name'''
+
+		#Add name
+		path = Functions.Path(output_file)
+
+		if with_prefix:
+			#If prefix is held, add it to file name
+			path.add_file_prefix(f"{self.prefix}{self.number}_")
+
+		#If return as path - return object of path class
+		if as_path:
+			return path
+		else:
+			return path.get_full_path()
+
+
 	#@Readers
 	def __read_test_tasks_informations__(self, is_all_tasks: bool = False):
 		'''Function to read all tasks informations in test'''
@@ -146,13 +168,11 @@ class Assignment:
 		else:
 			#Otherwise generate document on path
 
-			#First of all - add generation folder to path
-			path = Functions.Path(output_file)
-			path.add_path(self.generation_folder)
+			#Generate path for output file (as path)
+			path = self.__get_output_file_name__(output_file, with_prefix, True)
 
-			if with_prefix:
-				#If prefix is held, add it to file name
-				path.add_file_prefix(f"{self.prefix}{self.number}_")
+			#Add generation folder to path
+			path.add_path(self.generation_folder)
 
 			#Then generate document with this path
 			document.generate_document(path.get_full_path())
@@ -223,6 +243,25 @@ class AssignmentsList(Functions.StructList):
 			self.dict_assignments[assignment.prefix] = []
 			return assignment.prefix
 
+	def get_filepath_from(self, 
+			output_file: str,
+			with_prefix: bool, 
+			prefix: str,
+			numbers: str, 
+			as_path: bool = False
+	):
+		'''Function to generate filepath for assignment if with prefix'''
+		path = Functions.Path(output_file)
+
+		if with_prefix:
+			#If prefix is held, add it to file name
+			path.add_file_prefix(f"{prefix}{numbers}_")
+
+		if as_path:
+			return path
+		else:
+			return path.get_full_path()
+
 
 	#@Generators
 	def generate_by_prefix(self, 
@@ -268,13 +307,13 @@ class AssignmentsList(Functions.StructList):
 			else:
 				#Otherwise generate document on path
 
-				#First of all - add generation folder to path
-				path = Functions.Path(output_file)
-				path.add_path(generation_folder)
+				#Generate path
+				path = self.get_filepath_from(
+					output_file, with_prefix, prefix, numbers, True
+				)
 
-				if with_prefix:
-					#If prefix is held, add it to file name
-					path.add_file_prefix(f"{prefix}{numbers}_")
+				#Add generation folder to path
+				path.add_path(generation_folder)
 
 				#Then generate document with this path
 				with open(path.get_full_path(), "w") as file:
@@ -290,7 +329,6 @@ class AssignmentsList(Functions.StructList):
 		Function to generate signle assignments from prefix name
 		By default prefix is for others (which isn't sorted)
 		'''
-
 		documents = []
 		for assignment in self.dict_assignments.get(prefix_name):
 			#For all assignments in this prefix name, 
@@ -306,6 +344,7 @@ class AssignmentsList(Functions.StructList):
 			return documents
 		else:
 			return []
+
 
 	def generate(self, 
 			output_file: str = None, 
@@ -367,20 +406,40 @@ class AssignmentsInformationClass:
 
 	def __init__(self):
 		self.dict = {}
-
+		self.descriptions = {}
 
 	#@Setters
-	def append(self, assignment_class, key: str):
+	def append(self, assignment_class: Assignment, key: str):
 		'''Function to append assignment class into this module'''
 		if self.dict.get(key) == None:
 			self.dict[key] = {}
+			self.descriptions[key] = "No description"
 
 		#Append assignment with it's number inside class
 		self.dict[key][assignment_class.number] = assignment_class
 
+	def set_description(self, key: str, description: str):
+		'''Function to set description to special key'''
+		self.descriptions[key] = description
+
 
 	#@Getters
-	def get(self, key: str, number: int):
+	def get(self, key: str, number: int) -> (Assignment, None):
 		'''Function to get assignment with it's key and number'''
-		if self.dict.get(key):
-			return self.dict[key].get(number)
+		if self.is_available(key, number):
+			return self.dict[key][number]
+
+	def get_description(self, key: str) -> str:
+		'''Function to get description of special key'''
+		if self.descriptions.get(key):
+			return self.descriptions[key]
+
+	def is_available(self, key: str, number: int) -> bool:
+		return bool(self.dict.get(key) and self.dict[key].get(number))
+
+	def get_dict_assignments(self) -> dict[str, list[int]]:
+		'''Function to get list of assignments keys and indicies'''
+		return {
+			key: list(self.dict[key].keys())
+			for key in self.dict.keys()
+		}
