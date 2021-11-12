@@ -154,6 +154,10 @@ class Path:
 	def get_full_path(self):
 		return self.output_file
 
+	def get_file_name(self):
+		head, tail = os.path.split(self.output_file)
+		return tail
+
 
 	@staticmethod
 	def isfile(path: str):
