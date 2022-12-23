@@ -1,5 +1,5 @@
 import Scripts.Generators.Tasks as Tasks
-import Scripts.Generators.Excercises as Excercises
+import Scripts.Generators.Exercises as Exercises
 import Scripts.Generators.Tests as Tests
 import Scripts.Generators.Entries as Entries
 import Scripts.Generators.Documents as Documents

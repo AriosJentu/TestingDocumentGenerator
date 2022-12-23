@@ -11,12 +11,12 @@ class Assignment:
 	Must contain default values for next parameters:
 	- 'layout' - 'DocumentLayout' with information about 
 		document path and replacement string, and it's PageStyle
-	- 'test' - 'Test' with it's 'Excercises', 
+	- 'test' - 'Test' with it's 'Exercises', 
 	- 'entries' - 'Entries' with their 'generate_information' method. 
 		This value can't be default, because it's generating by user's asking.
 		For this situation exist method 'set_entries'
 	- 'document_entries' - 'DocumentEntries' with additional information, 
-		which presented in pagestyle excercises format string. 
+		which presented in pagestyle exercises format string. 
 		This argument may not be presented in class, 
 		by default it's empty entry
 	- 'prefix' - String with prefix of the assignment. 
@@ -93,8 +93,8 @@ class Assignment:
 		self.test.set_all_tasks_generation(is_all_tasks)
 
 		#For all tests, read tasks
-		for excercise in self.test.get_excercises():
-			for tasks_information in excercise.get_tasks_information_list():
+		for exercise in self.test.get_exercises():
+			for tasks_information in exercise.get_tasks_information_list():
 				tasks_information.get_tasks().read_information()
 
 

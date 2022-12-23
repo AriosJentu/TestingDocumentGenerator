@@ -1,7 +1,7 @@
 from Scripts import Functions
 
 from Scripts.Generators import Tests
-from Scripts.Generators import Excercises
+from Scripts.Generators import Exercises
 from Scripts.Parser import Modules
 
 class Page(str):
@@ -61,53 +61,53 @@ class PageStyle:
 	PageStyle - class with style information about page of document
 	Inital arguments:
 	- 'test_format_string': Format-type string with content of test option of 
-		the page. Must containing {excercises} element to replace them with 
-		excercises of the test, and some other text {arg1}, {arg2} from 
+		the page. Must containing {exercises} element to replace them with 
+		exercises of the test, and some other text {arg1}, {arg2} from 
 		executing PageValues class, etc. Will be used in context 
 		of 'test_format_string.format(**format_arguments.dict(), 
-		excercises="Some excercises")'
-	- 'excercise_format_string': Format-type string for test. Must 
+		exercises="Some exercises")'
+	- 'exercise_format_string': Format-type string for test. Must 
 		containing {title} and {tasks} elements. Will be used in context 
-		of 'excercise_format_string.format(title="Title", tasks="Some tasks")'
+		of 'exercise_format_string.format(title="Title", tasks="Some tasks")'
 	- 'tasks_format_string': Format-type string for tasks. Must 
 		containing {task} element. Will be used in context 
 		of 'tasks_format_string.format(task="This task")'
 	Available attributes:
 	- 'test_option_format': Page format string
-	- 'excercise_format': Excercises format string
+	- 'exercise_format': Exercises format string
 	- 'tasks_format': Tasks format string
 	'''
 
 	def __init__(self, 
 			test_format_string: str, 
-			excercise_format_string: str,
+			exercise_format_string: str,
 			tasks_format_string: str = "{task}"
 	):
 		self.test_option_format = test_format_string
-		self.excercise_format = excercise_format_string
+		self.exercise_format = exercise_format_string
 		self.tasks_format = tasks_format_string
 
 
 	#Getters
-	def __format_excercise__(self, 
-			excercise: Excercises.GeneratedExcercise
+	def __format_exercise__(self, 
+			exercise: Exercises.GeneratedExercise
 	) -> str:
-		'''Function to format excercise'''
+		'''Function to format exercise'''
 
-		#First of all - format all tasks of this excercise
+		#First of all - format all tasks of this exercise
 		tasks_formatted = []
 
-		for task in excercise:
+		for task in exercise:
 			task_string = self.tasks_format.format(task=task.get_task())
 			tasks_formatted.append(task_string)
 
 		#Merge all tasks with new lines
-		excercise_tasks = "\n".join(tasks_formatted)
+		exercise_tasks = "\n".join(tasks_formatted)
 
-		#Format excercise with title and formated tasks
-		return self.excercise_format.format(
-			title=excercise.get_title(), 
-			tasks=excercise_tasks
+		#Format exercise with title and formated tasks
+		return self.exercise_format.format(
+			title=exercise.get_title(), 
+			tasks=exercise_tasks
 		)
 
 
@@ -116,31 +116,31 @@ class PageStyle:
 			format_arguments: PageValues, 
 	) -> Page:
 		'''
-		Function to generate page string from format arguments and excercises. 
+		Function to generate page string from format arguments and exercises. 
 			Put all in format string and return it.
 		Arguments:
 		- 'format_arguments': Object of class PageValues. Containing page 
-			arguments with test option with excercises
+			arguments with test option with exercises
 		'''
 
 		#Generate test for this page from available test option format 
 		# of PageValues object
 		generated_test = format_arguments.generate_test()
-		excercises_formatted = []
+		exercises_formatted = []
 		
-		#For all excercises from this generated test
-		for excercise in generated_test:
+		#For all exercises from this generated test
+		for exercise in generated_test:
 
-			#Format excercise with title and formated tasks and add it in list 
-			# of formatted excercises
-			excersise_formatted = self.__format_excercise__(excercise)
-			excercises_formatted.append(excersise_formatted)
+			#Format exercise with title and formated tasks and add it in list 
+			# of formatted exercises
+			excersise_formatted = self.__format_exercise__(exercise)
+			exercises_formatted.append(excersise_formatted)
 
-		#Merge all excercises and put this content inside page
-		page_excercises = "\n".join(excercises_formatted)
+		#Merge all exercises and put this content inside page
+		page_exercises = "\n".join(exercises_formatted)
 		page_content = self.test_option_format.format(
 			**format_arguments.dict(), 
-			excercises=page_excercises
+			exercises=page_exercises
 		)
 
 		return Page(page_content)
