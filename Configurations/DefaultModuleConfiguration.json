@@ -1,0 +1,13 @@
+{
+    "FileExtension": ".tex",
+    "EntriesCount": 10,
+    "EntriesElementSubstring": "A{value}",
+    "EntriesGroupName": "Sample Group Name",
+    "EntriesElementName": "Sample Element",
+    "EntriesDirectory": "",
+    "EmptyStringPrefix": ["%"],
+    "AssignmentGenerationDirectory": "Generated",
+    "ContentString": "#CONTENT#",
+    "ModuleString": "#MODULE#",
+    "EmptyStudentsSubstring": "n{count}students{group}"
+}
