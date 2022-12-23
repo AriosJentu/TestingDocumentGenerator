@@ -2,6 +2,8 @@ import random
 import os
 import os.path
 
+from Scripts import Globals
+
 class TestingException(Exception):
 	NoTasks = "There is no tasks. Maybe you need to generate them with 'read_information'?"
 	NoTasksSpecific = "There is no tasks. Maybe you need to generate them with 'read_information' or append some SpecificTaskInfo here?"
@@ -101,7 +103,18 @@ class Functions:
 		Function to check is string empty or is it starts 
 			from a comment operator (% for LaTeX)
 		'''
-		return string[0] == "%" or string == "" or string == " "
+		
+		CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
+
+		Containings = []
+		for comment in CurrentConfiguration.EmptyStringPrefixes:
+			Containings.append(
+				string[:len(comment)] == comment
+			)
+
+		Containings.append(string.strip() == "")
+
+		return True in Containings
 
 
 	@staticmethod

@@ -1,9 +1,10 @@
 from sys import argv
 import Scripts.Globals as Globals
+Globals.Initialize()
 
 import Scripts.Parser.Modules as Modules
 import Scripts.Parser.Configurations as Configurations
-
+	
 def load_all_modules():
 
 	modules = Modules.ModulesLoader()
@@ -50,8 +51,6 @@ def clear():
 	Configurations.CurrentConfiguration.clear_current_configuration()
 
 if __name__ == "__main__":
-
-	Globals.Initialize()
 
 	modules = load_all_modules()
 	default_configuration = load_default_configuration()
