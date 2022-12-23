@@ -24,6 +24,9 @@ class Struct:
 		for key, value in entries.items():
 			self.__dict__[key] = value
 
+	def add_dict(self, entries: dict):
+		return self.add(**entries)
+
 	#@Getters
 	def dict(self) -> dict:
 		'''Function to get struct as dictionary values'''
@@ -33,6 +36,10 @@ class Struct:
 	def from_struct(struct: 'Struct'):
 		'''Function to generate new struct from available struct'''
 		return Struct(**struct.dict())
+
+	@staticmethod
+	def from_dict(sdict: dict):
+		return Struct(**sdict)
 
 
 	#@Override
@@ -158,6 +165,9 @@ class Path:
 		head, tail = os.path.split(self.output_file)
 		return tail
 
+	def str(self):
+		return self.get_full_path()
+
 
 	@staticmethod
 	def isfile(path: str):
@@ -190,3 +200,10 @@ class Path:
 	@staticmethod
 	def replace_separator(path: str, replacement: str = "."):
 		return path.replace(os.sep, replacement)
+
+	#@Override
+	def __str__(self):
+		return self.get_full_path()
+
+	def __repr__(self):
+		return self.__str__()
