@@ -1,4 +1,5 @@
 from Scripts import Functions
+from Scripts import Globals
 
 class Module:
 	'''
@@ -77,7 +78,7 @@ class ModulesLoader:
 
 
 	#@Getters
-	def get_module(self, path: str):
+	def get_module(self, path: str) -> Module:
 		'''Function to get this module from it's name (path)'''
 		for module in self.modules:
 		
@@ -92,9 +93,6 @@ class ModulesLoader:
 
 				#Firstly - save this module as current
 				CurrentModule.set_current_module(module)
-				
-				#Then import this module
-				module.import_module()
 				
 				#Return this module
 				return module
@@ -124,37 +122,24 @@ class CurrentModule:
 	'''
 	CurrentModule - class to get and set information about current module 
 		in use.
-	It will create simple hidden directory with information file,
-		which will be loaded with the same class
+	This information saved in global variables of this project
 	'''
-	DIR_NAME = ".info"
-	FILE_NAME = "module"
-
-	@staticmethod
-	def openfile(mode="r"):
-		return open(
-			Functions.Path.join(
-				CurrentModule.DIR_NAME, 
-				CurrentModule.FILE_NAME
-			), 
-		mode)
 
 	@staticmethod
 	def set_current_module(module: Module):
 		'''Function to set current module'''
-		Functions.Path.makedir_if_not_exists(CurrentModule.DIR_NAME)
-		with CurrentModule.openfile("w") as file:
-			file.write(module.path)
+		Globals.CurrentModule = module
 
 	@staticmethod
 	def get_current_module_path() -> str:
 		'''Function to get current module'''
-		with CurrentModule.openfile() as file:
-			return file.read()
+		return Globals.CurrentModule.path
 
 	@staticmethod
 	def clear_current_module():
 		'''Function to clear current module'''
-		with CurrentModule.openfile("w") as file:
-			file.write("")
+		Globals.CurrentModule = None
 
+	@staticmethod
+	def import_module():
+		return Globals.CurrentModule.import_module()
