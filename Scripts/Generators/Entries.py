@@ -1,4 +1,7 @@
 from Scripts import Functions
+from Scripts import Globals
+
+CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Entries:
 	'''
@@ -14,7 +17,7 @@ class Entries:
 		returns struct list
 	'''
 
-	ENTRIES_COUNT = 10
+	ENTRIES_COUNT = CurrentConfiguration.EntriesCount
 
 	def __init__(self):
 		pass

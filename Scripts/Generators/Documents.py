@@ -1,8 +1,11 @@
 from Scripts import Functions
+from Scripts import Globals
 
 from Scripts.Generators import Tests
 from Scripts.Generators import Exercises
 from Scripts.Parser import Modules
+
+CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Page(str):
 	'''Define Page class as string class'''
@@ -164,8 +167,8 @@ class DocumentLayout:
 	def __init__(self, 
 			layout_path: str,
 			page_style: PageStyle,
-			content_string: str = "#CONTENT#",
-			module_path_string: str = "#MODULE#",
+			content_string: str = CurrentConfiguration.ContentString,
+			module_path_string: str = CurrentConfiguration.ModuleString,
 	):
 		self.layout = layout_path
 		self.pagestyle = page_style

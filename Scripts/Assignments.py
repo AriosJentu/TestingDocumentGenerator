@@ -1,8 +1,11 @@
 from Scripts import Functions
+from Scripts import Globals
 
 from Scripts.Generators import Tests
 from Scripts.Generators import Entries
 from Scripts.Generators import Documents
+
+CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Assignment:
 	'''
@@ -48,7 +51,7 @@ class Assignment:
 	document_entries: Entries.DocumentEntries = Entries.DocumentEntries()
 	prefix: str = "prefix"
 	number: int = 0
-	generation_folder: str = "Generated/"
+	generation_folder: str = CurrentConfiguration.AssignmentGenerationDirectory
 
 
 	#@Setters

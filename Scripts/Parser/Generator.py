@@ -1,12 +1,15 @@
 from Scripts import EntryStudents
 from Scripts import Assignments
 from Scripts import Functions
+from Scripts import Globals
 
 from Scripts.Generators import Entries
 
 from Scripts.Parser import Parser
 from Scripts.Parser import Modules
 from Scripts.Parser import Arguments
+
+CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Generator:
 	'''
@@ -35,7 +38,7 @@ class Generator:
 		self.kwarguments = dict(**kwargs)
 		self.assignments_list = Assignments.AssignmentsList()
 		self.filename = ""
-		self.fileextension = ".tex"
+		self.fileextension = CurrentConfiguration.FileExtension
 		self.separated = False
 		self.is_all_tasks = False
 
@@ -70,7 +73,7 @@ class Generator:
 		'''
 
 		if not isinstance(info_module, Modules.Module):
-			return Functions.TestingException(
+			raise Functions.TestingException(
 				Functions.TestingException.NoModule
 			)
 
@@ -177,8 +180,8 @@ class GeneratorWithStudents(Generator):
 		#If it's all tasks, doesn't matter which entries to generate
 		if self.is_all_tasks:
 			entries_obj.append(EntryStudents.StudentFromValues({
-				"student": "Sample element", 
-				"group": "Sample group"
+				"student": CurrentConfiguration.EntriesElementName, 
+				"group": CurrentConfiguration.EntriesGroupName
 			}))
 
 		#If it's not all tasks

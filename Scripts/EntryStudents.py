@@ -1,6 +1,9 @@
 from Scripts import Functions
+from Scripts import Globals
 
 from Scripts.Generators import Entries
+
+CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class EmptyStudents(Entries.Entries):
 	'''
@@ -14,7 +17,10 @@ class EmptyStudents(Entries.Entries):
 	#@Getters
 	def get_group_name(self, default: str = None) -> str:
 		if not default:
-			default = f"n{self.ENTRIES_COUNT}students{self.group}"
+			default = CurrentConfiguration.EmptyStudentsSubstring.format(
+				count=self.ENTRIES_COUNT,
+				group=self.group
+			)
 		return default
 
 	#@Generators
@@ -26,9 +32,15 @@ class EmptyStudents(Entries.Entries):
 		structs = Functions.StructList()
 		for index in range(self.ENTRIES_COUNT):
 			#Append indicies for student names
-			group = self.group if self.group != "" else "Sample group name"
+			group = (
+				self.group 
+				if self.group != "" 
+				else CurrentConfiguration.EntriesGroupName
+			)
 			structs.append(Functions.Struct(
-				student=f"A{index+1}", 
+				student=CurrentConfiguration.EntriesElementSubstring.format(
+					value=index+1
+				),
 				group=group
 			))
 
