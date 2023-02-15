@@ -84,11 +84,12 @@ class PageStyle:
 	def __init__(self, 
 			test_format_string: str, 
 			exercise_format_string: str,
-			tasks_format_string: str = "{task}"
+			tasks_format_string: str = "{task}",
 	):
 		self.test_option_format = test_format_string
 		self.exercise_format = exercise_format_string
 		self.tasks_format = tasks_format_string
+		self.updater = lambda text: text
 
 
 	#Getters
@@ -112,6 +113,13 @@ class PageStyle:
 			title=exercise.get_title(), 
 			tasks=exercise_tasks
 		)
+
+
+	#Setters
+	def set_updater_page_content_function(self, 
+			updater_function = lambda taskstring: taskstring
+	):
+		self.updater = updater_function
 
 
 	#@Generators
@@ -145,6 +153,8 @@ class PageStyle:
 			**format_arguments.dict(), 
 			exercises=page_exercises
 		)
+
+		page_content = self.updater(page_content)
 
 		return Page(page_content)
 
