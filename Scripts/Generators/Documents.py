@@ -116,7 +116,7 @@ class PageStyle:
 
 
 	#Setters
-	def set_updater_page_content_function(self, 
+	def set_page_content_updater_function(self, 
 			updater_function = lambda taskstring: taskstring
 	):
 		self.updater = updater_function
