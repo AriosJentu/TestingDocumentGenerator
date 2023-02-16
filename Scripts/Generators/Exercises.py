@@ -9,14 +9,20 @@ class GeneratedExercise:
 	Inital arguments:
 	- 'tasks': List of tasks (objects of 'Task' class)
 	- 'title': Title of the exercise
+	- 'exercise_format': Format string for exercise if it needs
 	Available attributes:
 	- 'tasks': List of tasks (objects of 'Task' class)
 	- 'title': Title of the exercise
 	'''
 
-	def __init__(self, tasks: list[Tasks.Task], title: str):
+	def __init__(self, 
+			tasks: list[Tasks.Task], 
+			title: str, 
+			exercise_format: str = None
+	):
 		self.tasks = tasks
 		self.title = title
+		self.exercise_format = exercise_format
 
 
 	#@Setters
@@ -34,6 +40,10 @@ class GeneratedExercise:
 	def get_tasks(self) -> list[Tasks.Task]:
 		'''Function to get ecxercise tasks'''
 		return self.tasks
+
+	def get_exercise_format(self) -> [str, None]:
+		'''Function to get exercise format'''
+		return self.exercise_format
 
 
 	#@Override
@@ -64,6 +74,10 @@ class Exercise:
 	- 'is_all_tasks': Key for creating all available tasks in files 
 		(for debug, if True - generate ALL tasks from files, 
 		by default it's False - generate tasks as default)
+	- 'exercise_format': String with format exercise's page style layout 
+		(Contains '{title}' and '{tasks}' substrings, 
+		if this value is 'None', it generates exercise format by default 
+		with PageStyle class)
 	Available attributes:
 	- 'tasks_info_list': List of the tasks information
 	- 'title': Title string of the exercise
@@ -76,6 +90,7 @@ class Exercise:
 			title: str = "",
 			shuffle: bool = False,
 			is_all_tasks: bool = False,
+			exercise_format: str = None,
 	):
 		if not tasks_info_list:
 			tasks_info_list = []
@@ -84,6 +99,7 @@ class Exercise:
 		self.title = title
 		self.shuffle = shuffle
 		self.is_all_tasks = is_all_tasks
+		self.exercise_format = exercise_format
 		self.set_all_tasks_generation(self.is_all_tasks)
 
 		#Updating title string function
@@ -109,6 +125,10 @@ class Exercise:
 		for tasks_info in self.tasks_info_list:
 			tasks_info.set_all_tasks_generation(self.is_all_tasks)
 
+	def set_exercise_format(self, exercise_format: str = None):
+		'''Function to set exercise's format string'''
+		self.exercise_format = exercise_format
+
 	def set_title_updater_function(self, 
 			updater = lambda titlestring: titlestring
 	):
@@ -124,9 +144,13 @@ class Exercise:
 
 
 	#@Getters
-	def get_tasks_information_list(self):
+	def get_tasks_information_list(self) -> list:
 		'''Function to get tasks information list'''
 		return self.tasks_info_list
+
+	def get_exercise_format(self) -> [str, None]:
+		'''Function to get exercise's format string'''
+		return self.exercise_format
 
 
 	#@Generators
@@ -145,7 +169,7 @@ class Exercise:
 		#Update title of the exercise
 		title = self.updater(self.title)
 
-		generated = GeneratedExercise(tasks, title)
+		generated = GeneratedExercise(tasks, title, self.exercise_format)
 
 		#Shuffle tasks if it's available to shuffle, 
 		# and tasks generating as exercise (not debug all tasks)

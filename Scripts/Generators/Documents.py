@@ -79,6 +79,7 @@ class PageStyle:
 	- 'test_option_format': Page format string
 	- 'exercise_format': Exercises format string
 	- 'tasks_format': Tasks format string
+	- 'updater': Function which updates page after generating content
 	'''
 
 	def __init__(self, 
@@ -108,8 +109,15 @@ class PageStyle:
 		#Merge all tasks with new lines
 		exercise_tasks = "\n".join(tasks_formatted)
 
+		#For default exercise format string use PageStyle's format
+		format_string = self.exercise_format
+
+		#If for this exercise exist self formatting, use it as format string:
+		if exercise.exercise_format:
+			format_string = exercise.exercise_format
+
 		#Format exercise with title and formated tasks
-		return self.exercise_format.format(
+		return format_string.format(
 			title=exercise.get_title(), 
 			tasks=exercise_tasks
 		)
@@ -119,6 +127,10 @@ class PageStyle:
 	def set_page_content_updater_function(self, 
 			updater_function = lambda taskstring: taskstring
 	):
+		'''
+		Function for chanhing page content updater `function` after 
+			generating content
+		'''
 		self.updater = updater_function
 
 
@@ -154,6 +166,7 @@ class PageStyle:
 			exercises=page_exercises
 		)
 
+		#Update content after generating
 		page_content = self.updater(page_content)
 
 		return Page(page_content)
