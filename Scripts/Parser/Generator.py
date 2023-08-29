@@ -156,8 +156,8 @@ class Generator:
 		# generated assignment
 		if len(self.assignments_list) > 0:
 			#Save log information about generated output file name
-			ending = "" if len(self.assignments_list) == 1 else "s"
-			this_ending = "this" if len(self.assignments_list) == 1 else "these"
+			ending = "" if len(documents) == 1 else "s"
+			this_ending = "this" if len(documents) == 1 else "these"
 			
 			info = f"Generate document{ending} on {this_ending} path{ending}:\n"
 			paths = []

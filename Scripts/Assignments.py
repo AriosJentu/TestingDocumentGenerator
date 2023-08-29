@@ -188,20 +188,18 @@ class AssignmentsList(Functions.StructList):
 		in one document. Contains list of Assignments. 
 	Assume that this assignments has same document page style and same layout
 	Initial arguments:
-	- 'assignmentslist' - list of objects of class 'Assignment'
+	- 'assignments_list' - list of objects of class 'Assignment'
 	Available parameters:
 	- 'structlist' - list of objects of class 'Assignment'
-	- 'prefixes' - dictionary of sorted prefixes with assignments. 
-		Sorting will be only for equal parameters 'layout' and 'prefix' 
-		of the class
-	Assignments with prefix "__other__" will be generated 
-		in individual documents ordering
+	- 'dict_assignments' - dictionary of sorted prefixes with assignments,
+		sorted by layouts.
+
 	Assume that generate function will be called only once
 	'''
 
 	def __init__(self, assignments_list: list[Assignment] = None):
 		super().__init__(assignments_list)
-		self.dict_assignments = {"__other__": []}
+		self.dict_assignments = {}
 
 
 	#@Setters
@@ -223,29 +221,44 @@ class AssignmentsList(Functions.StructList):
 		#For all assignments
 		for assignment in self.structlist:
 
-			#Get prefix to append, and then append
-			prefix = self.get_prefix_to_append(assignment)
-			self.dict_assignments[prefix].append(assignment)
+			#Get prefix and layout to append, and then append assignment by them
+			prefix, layout = self.get_prefix_layout_to_append(assignment)
+			self.dict_assignments[prefix][layout].append(assignment)
 
 
 	#@Getters
-	def get_prefix_to_append(self, assignment: Assignment) -> str:
-		'''Function to get in which prefix will append this assignment'''
+	def get_prefix_layout_to_append(self, assignment: Assignment) -> str:
+		'''
+		Function to get in which prefix and which layout this assignment 
+		will appear
+		'''
 
-		if list_assignments := self.dict_assignments.get(assignment.prefix):
-			#If assignment prefix exists inside dictionary
+		#Get prefix and layout
+		prefix = assignment.prefix
+		assignment_layout = assignment.layout.layout
+		
+		#Get layout dictionary from assignments dictionary with specific prefix
+		dict_layouts = self.dict_assignments.get(prefix)
+		
+		if dict_layouts:
+			#If layouts for this prefix exists inside dictionary
+			# get list of assignments
+			list_assignments = dict_layouts.get(assignment_layout)
+			
+			if not list_assignments:
+				#If there is no list of assignments for this assignment layout,
+				# create it
+				self.dict_assignments[prefix][assignment_layout] = list()
 
-			if list_assignments[0].layout.layout == assignment.layout.layout:
-				#And if layouts of this assignment and presented 
-				# in list are equal:
-				return assignment.prefix
-			else:
-				#If layouts are different, move it to other category
-				return "__other__"
+			#Return prefix and layout
+			return prefix, assignment_layout
+
 		else:
-			#Otherwise, create list by this prefix, and return this prefix
-			self.dict_assignments[assignment.prefix] = []
-			return assignment.prefix
+			#Otherwise, create dictionary with current assignment layout inside
+			# with empty list of assignments
+			self.dict_assignments[prefix] = {assignment_layout: list()}
+			return prefix, assignment_layout
+
 
 	def get_filepath_from(self, 
 			output_file: str,
@@ -268,91 +281,104 @@ class AssignmentsList(Functions.StructList):
 
 
 	#@Generators
-	def generate_by_prefix(self, 
+	def generate_by_prefix_layout(self, 
 			prefix: str, 
+			layout: str,
 			output_file: str = None, 
 			with_prefix: bool = True, 
 			is_all_tasks: bool = False
 	) -> [str, Functions.Path, None]:
 		'''
 		Function to generate all available assignments from list. 
-		Returns document string or file's path. Returns none in case of
-		prefix "__other__"
+		Returns document string or file's path, or None, if dictionary is empty
 		'''
 
-		#If this is "other" prefix, return nothing, 
-		# because it has another generator
-		if prefix == "__other__":
-			return
+		#Get dictionary with layouts and assignments inside by prefix
+		layouts = self.dict_assignments.get(prefix)
 
-		#If ths prefix exists
-		if assignments := self.dict_assignments.get(prefix):
-			
-			numbers = "".join([
-				str(assignment.number) 
-				for assignment in assignments
-			])
+		#If this prefix exists
+		if layouts:
 
-			layout = assignments[0].layout
-			generation_folder = assignments[0].generation_folder
+			#Get list of assignments for chosen layout
+			assignments = layouts.get(layout)
 
-			#Generate only content
-			content = "\n".join([
-				assignment.generate(
-					only_content=True, 
-					is_all_tasks=is_all_tasks) 
-				for assignment in assignments
-			])
+			#If list of assignments exists
+			if assignments:
 
-			#Then get document string 
-			document_string = layout.get_document_string_wth_content(content)
+				#Get numbers of assignments
+				numbers = "".join([
+					str(assignment.number) 
+					for assignment in assignments
+				])
 
-			#If there is no output file
-			if not output_file:
-				#Return just document string
-				return document_string
+				#Find generation folder
+				layout_obj = assignments[0].layout
+				generation_folder = assignments[0].generation_folder
 
-			else:
-				#Otherwise generate document on path
+				#Generate only content
+				content = "\n".join([
+					assignment.generate(
+						only_content=True, 
+						is_all_tasks=is_all_tasks) 
+					for assignment in assignments
+				])
 
-				#Generate path
-				path = self.get_filepath_from(
-					output_file, with_prefix, prefix, numbers, True
-				)
+				#Then get document string 
+				document_out = layout_obj.get_document_string_wth_content(content)
 
-				#Add generation folder to path
-				path.add_path(generation_folder)
+				#If there is no output file
+				if not output_file:
+					#Return just document string
+					return document_out
 
-				#Then generate document with this path
-				with open(path.get_full_path(), "w") as file:
-					file.write(document_string)
+				else:
+					#Otherwise generate document on path
 
-				return path
+					#Generate path
+					path = self.get_filepath_from(
+						output_file, with_prefix, prefix, numbers, True
+					)
+
+					#Add generation folder to path
+					path.add_path(generation_folder)
+
+					#Then generate document with this path
+					with open(path.get_full_path(), "w") as file:
+						file.write(document_out)
+
+					#Return saved path of document
+					return path
+
 
 	def generate_as_single(self, 
-			prefix_name: str = "__other__", 
+			prefix_name: str = "", 
 			output_file: str = None, 
 			with_prefix: bool = True, 
 			is_all_tasks: bool = False
 	) -> [list[str]]:
 		'''
-		Function to generate signle assignments from prefix name
-		By default prefix is for others (which isn't sorted)
+		Function to generate signle assignments from prefix name.
 		'''
-		documents = []
-		for assignment in self.dict_assignments.get(prefix_name):
-			#For all assignments in this prefix name, 
-			# generate individual assignment document
-			document = assignment.generate(
-				output_file, 
-				with_prefix, 
-				is_all_tasks=is_all_tasks
-			)
-			documents.append(document)
 
-		# if not output_file:
-		# else:
-		# 	return []
+		documents = []
+
+		#If prefix exists in dictionary
+		if prefix_name in self.dict_assignments.keys():
+
+			#For all layouts
+			for layout in self.dict_assignments.get(prefix_name).keys():
+
+				#Get assignments
+				assignments = self.dict_assignments.get(prefix_name).get(layout)
+				for assignment in assignments:
+					#For all assignments in this prefix name with specific 
+					# layout, generate individual assignment document
+					document = assignment.generate(
+						output_file, 
+						with_prefix, 
+						is_all_tasks=is_all_tasks
+					)
+					documents.append(document)
 		
 		return documents
 
@@ -382,30 +408,38 @@ class AssignmentsList(Functions.StructList):
 		#For all prefix in assignments
 		for prefix in self.dict_assignments.keys():
 
-			#If prefix is not in others, and files without separating 
-			if prefix != "__other__" and not separated:
-				#Generate document by prefix
-				document = self.generate_by_prefix(
-					prefix, 
-					output_file, 
-					with_prefix, 
-					is_all_tasks
-				)
-				documents.append(document)
+			#If files not separated
+			if not separated:
+				
+				#Get all layouts for this prefix
+				layouts = self.dict_assignments.get(prefix)
+
+				#For all layouts
+				for layout in layouts.keys():
+
+					#Generate document by prefix and layout
+					document = self.generate_by_prefix_layout(
+						prefix, 
+						layout,
+						output_file, 
+						with_prefix, 
+						is_all_tasks
+					)
+					documents.append(document)
 			
-			#Otherwise generate others (or, if separated, 
-			# generate them separately)
+			#Otherwise generate separated documents
 			else:
-				#Then just add list of documents into documents list
+
 				documents_ = self.generate_as_single(
 					prefix, 
 					output_file, 
 					with_prefix, 
 					is_all_tasks
 				)
+
+				#Then just add list of documents into documents list
 				documents += documents_
 
-		# if not output_file:
 		return documents
 
 
