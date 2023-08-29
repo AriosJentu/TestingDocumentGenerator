@@ -5,6 +5,8 @@ from Scripts.Generators import Tests
 from Scripts.Generators import Entries
 from Scripts.Generators import Documents
 
+from Scripts.Logging import Logging
+
 CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Assignment:
@@ -286,7 +288,8 @@ class AssignmentsList(Functions.StructList):
 			layout: str,
 			output_file: str = None, 
 			with_prefix: bool = True, 
-			is_all_tasks: bool = False
+			is_all_tasks: bool = False,
+			is_exec_command: bool = False
 	) -> [str, Functions.Path, None]:
 		'''
 		Function to generate all available assignments from list. 
@@ -345,6 +348,16 @@ class AssignmentsList(Functions.StructList):
 					#Then generate document with this path
 					with open(path.get_full_path(), "w") as file:
 						file.write(document_out)
+						Logging.log("\t" + path.get_full_path())
+
+					#If needs to execute command
+					if is_exec_command:
+						#Exec it
+						execs = CurrentConfiguration.OSExec
+						execs = Functions.Functions.replace_path_substrings(execs, path)
+						
+						Logging.warning("Executing:", execs)
+						Functions.Exec.osexec(execs)
 
 					#Return saved path of document
 					return path
@@ -354,7 +367,8 @@ class AssignmentsList(Functions.StructList):
 			prefix_name: str = "", 
 			output_file: str = None, 
 			with_prefix: bool = True, 
-			is_all_tasks: bool = False
+			is_all_tasks: bool = False,
+			is_exec_command: bool = False
 	) -> [list[str]]:
 		'''
 		Function to generate signle assignments from prefix name.
@@ -376,7 +390,8 @@ class AssignmentsList(Functions.StructList):
 					document = assignment.generate(
 						output_file, 
 						with_prefix, 
-						is_all_tasks=is_all_tasks
+						is_all_tasks=is_all_tasks,
+						is_exec_command=is_exec_command
 					)
 					documents.append(document)
 		
@@ -387,7 +402,8 @@ class AssignmentsList(Functions.StructList):
 			output_file: str = None, 
 			with_prefix: bool = True, 
 			separated: bool = False, 
-			is_all_tasks: bool = False
+			is_all_tasks: bool = False,
+			is_exec_command: bool = False
 	) -> [list[str, Functions.Path], None]:
 		'''
 		Function to generate all possible files
@@ -423,7 +439,8 @@ class AssignmentsList(Functions.StructList):
 						layout,
 						output_file, 
 						with_prefix, 
-						is_all_tasks
+						is_all_tasks,
+						is_exec_command
 					)
 					documents.append(document)
 			
@@ -434,7 +451,8 @@ class AssignmentsList(Functions.StructList):
 					prefix, 
 					output_file, 
 					with_prefix, 
-					is_all_tasks
+					is_all_tasks,
+					is_exec_command
 				)
 
 				#Then just add list of documents into documents list

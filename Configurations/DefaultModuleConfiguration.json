@@ -4,9 +4,15 @@
     "EntriesElementSubstring": "A{value}",
     "EntriesGroupName": "Sample Group Name",
     "EntriesElementName": "Sample Element",
-    "EmptyStringPrefixes": ["%"],
+    "EntriesOnlyCounterSubstring": "n{count}students{group}",
+    "IgnoreLinePrefixes": ["%"],
     "AssignmentGenerationDirectory": "Generated",
     "ContentString": "#CONTENT#",
     "ModuleString": "#MODULE#",
-    "EmptyStudentsSubstring": "n{count}students{group}"
+    "FileLocalPathString": "#FILEPATH#",
+    "FileLocationString": "#FILELOCATION#",
+    "FileNameString": "#FILENAME#",
+    "FileNameExtString": "#FILENAMEEXT#",
+    "FileExtensionString": "#FILEEXTENSION#",
+    "OSExec": "echo $(realpath #FILEPATH#)"
 }

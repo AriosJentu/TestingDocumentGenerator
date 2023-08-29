@@ -96,60 +96,6 @@ class StructList:
 			yield struct
 
 
-class Functions:
-
-	@staticmethod
-	def is_empty_string(string) -> bool:
-		'''
-		Function to check is string empty or is it starts 
-			from a comment operator (% for LaTeX)
-		'''
-		
-		CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
-
-		Containings = []
-		for comment in CurrentConfiguration.EmptyStringPrefixes:
-			Containings.append(
-				string[:len(comment)] == comment
-			)
-
-		Containings.append(string.strip() == "")
-
-		return True in Containings
-
-
-	@staticmethod
-	def get_unused_index(from_list: list, cache_list: list) -> int:
-		'''
-		Function to get random index from unused tasks, and 
-			this index isn't appeared in cache
-		'''
-		random.seed()
-		randindex = random.randrange(len(from_list))
-
-		#If this element in cache already, then choose another element again
-		if from_list[randindex] in cache_list:
-			return Functions.get_unused_index(from_list, cache_list)
-		else:
-			return randindex
-
-
-	@staticmethod
-	def remove_new_lines(string):
-		'''Function to remove new lines'''
-		return string.replace("\n", "")
-
-
-	@staticmethod
-	def crop_list_size(plist: list, size: int):
-		'''Function to crop list size to fixed'''
-
-		if len(plist) < size:
-			plist = plist + [None]*(size-len(plist))
-
-		return plist[:size]
-
-
 class Path:
 	'''
 	Path - class to work with path
@@ -178,6 +124,19 @@ class Path:
 	def get_file_name(self):
 		head, tail = os.path.split(self.output_file)
 		return tail
+
+	def get_file_directory(self):
+		head, tail = os.path.split(self.output_file)
+		return head
+
+	def get_file_name_noext(self):
+		head, tail = os.path.split(os.path.splitext(self.output_file)[0])
+		return tail
+
+	def get_file_extension(self):
+		head, tail = os.path.splitext(self.output_file)
+		return tail
+
 
 	def str(self):
 		return self.get_full_path()
@@ -221,3 +180,79 @@ class Path:
 
 	def __repr__(self):
 		return self.__str__()
+
+
+class Functions:
+
+	@staticmethod
+	def is_empty_string(string) -> bool:
+		'''
+		Function to check is string empty or is it starts 
+			from a comment operator (% for LaTeX)
+		'''
+		
+		CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
+
+		Containings = []
+		for comment in CurrentConfiguration.IgnoreLinePrefixes:
+			Containings.append(
+				string[:len(comment)] == comment
+			)
+
+		Containings.append(string.strip() == "")
+
+		return True in Containings
+
+
+	@staticmethod
+	def get_unused_index(from_list: list, cache_list: list) -> int:
+		'''
+		Function to get random index from unused tasks, and 
+			this index isn't appeared in cache
+		'''
+		random.seed()
+		randindex = random.randrange(len(from_list))
+
+		#If this element in cache already, then choose another element again
+		if from_list[randindex] in cache_list:
+			return Functions.get_unused_index(from_list, cache_list)
+		else:
+			return randindex
+
+
+	@staticmethod
+	def remove_new_lines(string):
+		'''Function to remove new lines'''
+		return string.replace("\n", "")
+
+
+	@staticmethod
+	def crop_list_size(plist: list, size: int):
+		'''Function to crop list size to fixed'''
+
+		if len(plist) < size:
+			plist = plist + [None]*(size-len(plist))
+
+		return plist[:size]
+
+
+	@staticmethod
+	def replace_path_substrings(string: str, path: Path):
+		
+		CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
+
+		string = string.replace(CurrentConfiguration.FileLocalPathString, path.get_full_path())
+		string = string.replace(CurrentConfiguration.FileLocationString, path.get_file_directory())
+		string = string.replace(CurrentConfiguration.FileNameString, path.get_file_name_noext())
+		string = string.replace(CurrentConfiguration.FileNameExtString, path.get_file_name())
+		string = string.replace(CurrentConfiguration.FileExtensionString, path.get_file_extension())
+
+		return string
+
+
+class Exec:
+
+	@staticmethod
+	def osexec(command: str):
+		return os.system(command)
+

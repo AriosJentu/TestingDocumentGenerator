@@ -17,7 +17,7 @@ class EmptyStudents(Entries.Entries):
 	#@Getters
 	def get_group_name(self, default: str = None) -> str:
 		if not default:
-			default = CurrentConfiguration.EmptyStudentsSubstring.format(
+			default = CurrentConfiguration.EntriesOnlyCounterSubstring.format(
 				count=self.ENTRIES_COUNT,
 				group=self.group
 			)

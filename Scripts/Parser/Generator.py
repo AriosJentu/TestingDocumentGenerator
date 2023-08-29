@@ -43,6 +43,7 @@ class Generator:
 		self.fileextension = CurrentConfiguration.FileExtension
 		self.separated = False
 		self.is_all_tasks = False
+		self.is_exec_command = False
 
 
 	#@Setters
@@ -55,6 +56,10 @@ class Generator:
 	def set_all_tasks_generation(self, is_all_tasks: bool = False):
 		'''Function to set variable of generating all tasks'''
 		self.is_all_tasks = is_all_tasks
+
+	def set_command_execution(self, is_exec_command: bool = False):
+		'''Function to set variable of generating all tasks'''
+		self.is_exec_command = is_exec_command
 
 	def set_separated(self, separated: bool = False):
 		'''Function to set separation of the documents'''
@@ -143,29 +148,25 @@ class Generator:
 	#@Generators
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
+		
+		#If there is exist at least one assignment - show information about
+		# generated assignment
+		if len(self.assignments_list) > 0:
+			#Save log information about generated output file name
+			ending = "" if len(self.assignments_list) == 1 else "s"
+			this_ending = "this" if len(self.assignments_list) == 1 else "these"
+			
+			info = f"Generate document{ending} on {this_ending} path{ending}:"
+			Logging.info(info)
 
 		#Generate assignments
 		documents = self.assignments_list.generate(
 			self.filename+self.fileextension, 
 			with_prefix, 
 			self.separated, 
-			self.is_all_tasks
+			self.is_all_tasks,
+			self.is_exec_command
 		)
-
-		#If there is exist at least one assignment - show information about
-		# generated assignment
-		if len(self.assignments_list) > 0:
-			#Save log information about generated output file name
-			ending = "" if len(documents) == 1 else "s"
-			this_ending = "this" if len(documents) == 1 else "these"
-			
-			info = f"Generate document{ending} on {this_ending} path{ending}:\n"
-			paths = []
-			for document_info in documents:
-				if isinstance(document_info, Functions.Path):
-					paths.append("\t" + document_info.get_full_path())
-			
-			Logging.info(info + "\n".join(paths))
 
 		return documents
 
@@ -235,7 +236,14 @@ class GeneratorWithStudents(Generator):
 		#Parse arguments for all tasks
 		if "-a" in args:
 			self.set_all_tasks_generation(True)
+			Logging.info("Running with all tasks")
 			args.pop(args.index("-a"))
+
+		#Parse arguments for executing command
+		if "-e" in args:
+			self.set_command_execution(True)
+			Logging.warning("Running with executing command")
+			args.pop(args.index("-e"))
 
 		#Keys must be 1st argument, after script name, entries 
 		# must be 2nd argument
