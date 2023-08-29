@@ -68,7 +68,7 @@ class Assignment:
 
 	#@Getters
 	def __get_output_file_name__(self, 
-			appending_string: str, 
+			output_file: str, 
 			with_prefix: bool = True,
 			as_path: bool = False
 	) -> str:
@@ -350,10 +350,11 @@ class AssignmentsList(Functions.StructList):
 			)
 			documents.append(document)
 
-		if not output_file:
-			return documents
-		else:
-			return []
+		# if not output_file:
+		# else:
+		# 	return []
+		
+		return documents
 
 
 	def generate(self, 
