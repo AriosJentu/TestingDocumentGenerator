@@ -46,7 +46,9 @@ class Struct:
 
 	#@Override
 	def __iter__(self):
-		return iter(vars(self).values())
+		# return iter(vars(self).values())
+		for key, value in self.__dict__.items():
+			yield (key, value)
 
 	def __len__(self):
 		return len(vars(self).keys())
@@ -63,7 +65,6 @@ class Struct:
 
 	def __repr__(self):
 		return self.__str__()
-
 
 class StructList:
 	'''

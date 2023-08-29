@@ -133,7 +133,7 @@ class Assignment:
 			with_prefix: bool = True, 
 			only_content: bool = False, 
 			is_all_tasks: bool = False
-	) -> [str, None]:
+	) -> [str, Functions.Path]:
 		'''
 		Function to generate Assignment document for various 'entries'. 
 		Arguments:
@@ -179,6 +179,7 @@ class Assignment:
 
 			#Then generate document with this path
 			document.generate_document(path.get_full_path())
+			return path
 
 
 class AssignmentsList(Functions.StructList):
@@ -198,8 +199,8 @@ class AssignmentsList(Functions.StructList):
 	Assume that generate function will be called only once
 	'''
 
-	def __init__(self, assignmentslist: list[Assignment] = None):
-		super().__init__(assignmentslist)
+	def __init__(self, assignments_list: list[Assignment] = None):
+		super().__init__(assignments_list)
 		self.dict_assignments = {"__other__": []}
 
 
@@ -272,8 +273,12 @@ class AssignmentsList(Functions.StructList):
 			output_file: str = None, 
 			with_prefix: bool = True, 
 			is_all_tasks: bool = False
-	) -> [str, None]:
-		'''Function to generate all available assignments from list'''
+	) -> [str, Functions.Path, None]:
+		'''
+		Function to generate all available assignments from list. 
+		Returns document string or file's path. Returns none in case of
+		prefix "__other__"
+		'''
 
 		#If this is "other" prefix, return nothing, 
 		# because it has another generator
@@ -322,6 +327,8 @@ class AssignmentsList(Functions.StructList):
 				with open(path.get_full_path(), "w") as file:
 					file.write(document_string)
 
+				return path
+
 	def generate_as_single(self, 
 			prefix_name: str = "__other__", 
 			output_file: str = None, 
@@ -354,7 +361,7 @@ class AssignmentsList(Functions.StructList):
 			with_prefix: bool = True, 
 			separated: bool = False, 
 			is_all_tasks: bool = False
-	) -> [list[str], None]:
+	) -> [list[str, Functions.Path], None]:
 		'''
 		Function to generate all possible files
 		Arguments:
@@ -397,8 +404,8 @@ class AssignmentsList(Functions.StructList):
 				)
 				documents += documents_
 
-		if not output_file:
-			return documents
+		# if not output_file:
+		return documents
 
 
 class AssignmentsInformationClass:
