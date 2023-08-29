@@ -9,6 +9,8 @@ from Scripts.Parser import Parser
 from Scripts.Parser import Modules
 from Scripts.Parser import Arguments
 
+from Scripts.Logging import Logging
+
 CurrentConfiguration = Globals.CurrentConfiguration.get_configuration()
 
 class Generator:
@@ -41,9 +43,6 @@ class Generator:
 		self.fileextension = CurrentConfiguration.FileExtension
 		self.separated = False
 		self.is_all_tasks = False
-
-		#Log for saving any information to show in generation
-		self.log = []
 
 
 	#@Setters
@@ -114,19 +113,20 @@ class Generator:
 			#Save information to log
 			ending = "" if len(non_found) == 1 else "es"
 			notfounded = ", ".join(non_found)
-			self.log.append(f"Class{ending} [{notfounded}] not found")
+
+			Logging.warning(f"Class{ending} [{notfounded}] not found")
 
 		#If there is no assignments
 		if len(assignments) == 0:
 			#Save information about all available assignments into log
-			self.log.append(f"Available assignments for {str(info_module)}:")
+			Logging.info(f"Available assignments for {str(info_module)}:")
 			
 			#Add all assignments into log
 			for key, numbers in assignment_info.get_dict_assignments().items():
 				#Read description
 				descr = assignment_info.get_description(key)
 
-				self.log.append(f"\t- {key}: {str(numbers)} - {descr}")
+				Logging.log(f"\t- {key}: {str(numbers)} - {descr}")
 
 		#Then generate object of class AssignmentsList from this assignments, 
 		# and add module prefix for this
@@ -139,30 +139,35 @@ class Generator:
 		'''Function to parse available arguments. Must be overloaded'''
 		pass
 
-	def get_log(self) -> str:
-		'''Function to get all log information'''
-		return "\n".join(self.log)
 
 	#@Generators
 	def generate(self, with_prefix: bool = True) -> [list[str], None]:
 		'''Function to generate document from this assignment list'''
+
+		#Generate assignments
+		documents = self.assignments_list.generate(
+			self.filename+self.fileextension, 
+			with_prefix, 
+			self.separated, 
+			self.is_all_tasks
+		)
 
 		#If there is exist at least one assignment - show information about
 		# generated assignment
 		if len(self.assignments_list) > 0:
 			#Save log information about generated output file name
 			ending = "" if len(self.assignments_list) == 1 else "s"
-			self.log.append(
-				f"Generate document{ending} with last name '{self.filename}'"
-			)
+			this_ending = "this" if len(self.assignments_list) == 1 else "these"
+			
+			info = f"Generate document{ending} on {this_ending} path{ending}:\n"
+			paths = []
+			for document_info in documents:
+				if isinstance(document_info, Functions.Path):
+					paths.append("\t" + document_info.get_full_path())
+			
+			Logging.info(info + "\n".join(paths))
 
-		#Generate assignments
-		return self.assignments_list.generate(
-			self.filename+self.fileextension, 
-			with_prefix, 
-			self.separated, 
-			self.is_all_tasks
-		)
+		return documents
 
 
 class GeneratorWithStudents(Generator):
